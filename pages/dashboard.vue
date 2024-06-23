@@ -15,13 +15,18 @@
           <div v-for="(group, key) in picks" :key="key">
             <div class="flex">
               <h2 class="text-xl font-semibold mb-2">Group {{ key }}</h2>
-              <span class="ml-auto font-semibold">Points</span>
+              <span class="ml-auto font-semibold">Score</span>
             </div>
             <ol class="rounded bg-white border divide-y overflow-hidden">
-              <li v-for="(pick, index) in group" :key="pick.name" class="py-2 px-4 inline-flex items-center gap-2 relative w-full" :class="STANDINGS[key][index].country.name === pick.name ? 'bg-green-50' : ''">
+              <li v-for="(pick, index) in group" :key="pick.name" class="py-2 px-4 inline-flex items-center gap-2 relative w-full" :class="{ 'bg-green-50': STANDINGS[key][index].country.name === pick.name }">
+                <span v-if="STANDINGS[key][index].qualified" class="absolute top-0 left-0 bottom-0 w-1 bg-green-500"></span>
+                <span v-if="!STANDINGS[key][index].qualified && !STANDINGS[key][index].eliminated" class="absolute top-0 left-0 bottom-0 w-1 bg-amber-500"></span>
+                <span v-if="STANDINGS[key][index].eliminated" class="absolute top-0 left-0 bottom-0 w-1 bg-red-500"></span>
                 <span>{{ pick.flag }}</span>
-                <span>{{ pick.name }}</span>
-                <span v-if="STANDINGS[key][index].country.name === pick.name" class="block ml-auto rounded-full text-xs bg-green-200 text-green-800 py-0.5 px-2 shadow-inner">{{ RANKING_POINTS_GROUP[index] }}</span></li>
+                <span :class="{ 'line-through text-slate-400': STANDINGS[key][index].eliminated }">{{ pick.name }}</span>
+                <span v-if="STANDINGS[key][index].country.name === pick.name" class="block ml-auto rounded-full text-xs bg-green-200 text-green-800 py-0.5 px-2 shadow-inner">{{ RANKING_POINTS_GROUP[index] }}</span>
+                <span v-else class="block ml-auto rounded-full text-xs bg-gray-200 text-gray-500 py-0.5 px-2 shadow-inner">0</span>
+              </li>
             </ol>
           </div>
         </div>

@@ -148,109 +148,157 @@ export const STANDINGS = {
   'A': [
     {
       country: COUNTRIES.GER,
-      points: 6,
+      points: 7,
+      qualified: true,
+      eliminated: false,
     },
     {
       country: COUNTRIES.SWI,
-      points: 4,
+      points: 5,
+      qualified: true,
+      eliminated: false,
+    },
+    {
+      country: COUNTRIES.HUN,
+      points: 3,
+      qualified: false,
+      eliminated: false,
     },
     {
       country: COUNTRIES.SCO,
       points: 1,
+      qualified: false,
+      eliminated: true,
     },
-    {
-      country: COUNTRIES.HUN,
-      points: 0,
-    }
   ],
   'B': [
     {
       country: COUNTRIES.SPA,
       points: 6,
+      qualified: true,
+      eliminated: false,
     },
     {
       country: COUNTRIES.ITA,
       points: 3,
+      qualified: false,
+      eliminated: false,
     },
     {
       country: COUNTRIES.ALB,
       points: 1,
+      qualified: false,
+      eliminated: false,
     },
     {
       country: COUNTRIES.CRO,
       points: 0,
+      qualified: false,
+      eliminated: false,
     }
   ],
   'C': [
     {
       country: COUNTRIES.ENG,
       points: 4,
+      qualified: false,
+      eliminated: false,
     },
     {
       country: COUNTRIES.DEN,
       points: 2,
+      qualified: false,
+      eliminated: false,
     },
     {
       country: COUNTRIES.SLO,
       points: 2,
+      qualified: false,
+      eliminated: false,
     },
     {
       country: COUNTRIES.SER,
       points: 1,
+      qualified: false,
+      eliminated: false,
     }
   ],
   'D': [
     {
       country: COUNTRIES.NED,
       points: 4,
+      qualified: false,
+      eliminated: false,
     },
     {
       country: COUNTRIES.FRA,
       points: 4,
+      qualified: false,
+      eliminated: false,
     },
     {
       country: COUNTRIES.AUS,
       points: 3,
+      qualified: false,
+      eliminated: false,
     },
     {
       country: COUNTRIES.POL,
       points: 0,
+      qualified: false,
+      eliminated: false,
     }
   ],
   'E': [
     {
       country: COUNTRIES.ROM,
       points: 3,
+      qualified: false,
+      eliminated: false,
     },
     {
       country: COUNTRIES.BEL,
       points: 3,
+      qualified: false,
+      eliminated: false,
     },
     {
       country: COUNTRIES.SLV,
       points: 3,
+      qualified: false,
+      eliminated: false,
     },
     {
       country: COUNTRIES.UKR,
       points: 3,
+      qualified: false,
+      eliminated: false,
     }
   ],
   'F': [
     {
       country: COUNTRIES.POR,
       points: 6,
+      qualified: true,
+      eliminated: false,
     },
     {
       country: COUNTRIES.TUR,
       points: 3,
+      qualified: false,
+      eliminated: false,
     },
     {
       country: COUNTRIES.CZE,
       points: 1,
+      qualified: false,
+      eliminated: false,
     },
     {
       country: COUNTRIES.GEO,
       points: 1,
+      qualified: false,
+      eliminated: false,
     }
   ]
 }
