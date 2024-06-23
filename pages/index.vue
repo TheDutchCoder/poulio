@@ -10,6 +10,7 @@
         <label for="password" class="block mb-1 font-semibold cursor-pointer">Password <sup class="text-indigo-600">*</sup></label>
         <input type="password" id="password" placeholder="Password" class="p-2 border outline-2 outline-transparent rounded w-full transition-all focus:outline-indigo-500" v-model="password" required>
       </div>
+      <div v-if="error" class="rounded border border-red-300 bg-red-50 text-red-700 p-2 text-sm">Incorrect username or password.</div>
       <button type="submit" class="rounded p-2 bg-indigo-600 text-white font-semibold mt-4 transition-colors hover:bg-indigo-800 focus:bg-indigo-800">Log in</button>
     </div>
   </form>
@@ -39,6 +40,7 @@ definePageMeta({
 
 const email = ref('')
 const password = ref('')
+const error = ref(false)
 const users = useUsers()
 const user = useUser()
 user.value = undefined
@@ -56,9 +58,7 @@ async function login() {
     user.value = foundUser
     await navigateTo('/dashboard')
   } else {
-    alert('Invalid email or password')
+    error.value = true
   }
 }
-
-// generateSHA1('').then(hash => console.log(hash));
 </script>

@@ -1,4 +1,5 @@
-export const RANKING_POINTS = [2, 2, 1, 1]
+export const RANKING_POINTS_GROUP = [2, 2, 1, 1]
+export const RANKING_POINTS_PLAYOFFS = [1, 2, 4, 8]
 
 export const COUNTRIES = {
   GER: {

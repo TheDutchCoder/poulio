@@ -1,12 +1,13 @@
 <template>
   <div v-if="user" class="w-full flex flex-col gap-4 lg:gap-8">
+    <!-- Group Picks -->
     <CollapsibleArea is-open>
       <template #header>
         <div class="flex">
           <h1 class="text-xl font-semibold lg:text-2xl">Group Picks for {{ user.name }}</h1>
         </div>
         <ul>
-          <li><span class="text-slate-500">({{ totalPoints }} out of {{ maxPoints }} points)</span></li>
+          <li><span class="text-slate-500">({{ totalPointsGroup }} out of {{ maxPointsGroup }} points)</span></li>
         </ul>
       </template>
       <template #content>
@@ -20,10 +21,25 @@
               <li v-for="(pick, index) in group" :key="pick.name" class="py-2 px-4 inline-flex items-center gap-2 relative w-full" :class="STANDINGS[key][index].country.name === pick.name ? 'bg-green-50' : ''">
                 <span>{{ pick.flag }}</span>
                 <span>{{ pick.name }}</span>
-                <span v-if="STANDINGS[key][index].country.name === pick.name" class="block ml-auto rounded-full text-xs bg-green-200 text-green-800 py-0.5 px-2 shadow-inner">{{ RANKING_POINTS[index] }}</span></li>
+                <span v-if="STANDINGS[key][index].country.name === pick.name" class="block ml-auto rounded-full text-xs bg-green-200 text-green-800 py-0.5 px-2 shadow-inner">{{ RANKING_POINTS_GROUP[index] }}</span></li>
             </ol>
           </div>
         </div>
+      </template>
+    </CollapsibleArea>
+
+    <!-- Playoff Picks -->
+    <CollapsibleArea>
+      <template #header>
+        <div class="flex">
+          <h1 class="text-xl font-semibold lg:text-2xl">Playoff Picks for {{ user.name }}</h1>
+        </div>
+        <ul>
+          <li><span class="text-slate-500">(0 out of {{ maxPointsPlayoffs }} points)</span></li>
+        </ul>
+      </template>
+      <template #content>
+        <p class="rounded border border-blue-300 text-blue-700 p-4 bg-blue-50 mt-4 text-sm">There are no play-off picks yet. You can submit your picks after the group stage has ended.</p>
       </template>
     </CollapsibleArea>
 
@@ -51,7 +67,7 @@
 </template>
 
 <script setup>
-import { USER_GROUP_PICKS, STANDINGS, RANKING_POINTS } from '~/constants'
+import { USER_GROUP_PICKS, STANDINGS, RANKING_POINTS_GROUP, RANKING_POINTS_PLAYOFFS } from '~/constants'
 
 definePageMeta({
   middleware: [
@@ -69,21 +85,33 @@ definePageMeta({
 
 const user = useUser()
 const picks = computed(() => USER_GROUP_PICKS[user.value.name])
-const totalPoints = computed(() => calculateTotalPoints(picks.value, STANDINGS, RANKING_POINTS))
-const maxPoints = computed(() => RANKING_POINTS.reduce((acc, curr) => acc + curr, 0) * 6)
+const totalPointsGroup = computed(() => calculateTotalPointsGroup(picks.value, STANDINGS, RANKING_POINTS_GROUP))
+const maxPointsGroup = computed(() => RANKING_POINTS_GROUP.reduce((acc, curr) => acc + curr, 0) * 6)
+const maxPointsPlayoffs = computed(() => RANKING_POINTS_PLAYOFFS.reduce((acc, curr, ind) => {
+  switch (ind) {
+    case 0:
+      return acc + (curr * 8)
+    case 1:
+      return acc + (curr * 4)
+    case 2:
+      return acc + (curr * 2)
+    case 3:
+      return acc + (curr)
+  }
+}, 0))
 
 const standings = computed(() => {
   const standings = []
   for (const user in USER_GROUP_PICKS) {
     const picks = USER_GROUP_PICKS[user];
-    const totalPoints = calculateTotalPoints(picks, STANDINGS, RANKING_POINTS);
+    const totalPoints = calculateTotalPointsGroup(picks, STANDINGS, RANKING_POINTS_GROUP);
     standings.push({ user, totalPoints });
   }
 
   return standings.sort((a, b) => b.totalPoints - a.totalPoints);
 });
 
-function calculateTotalPoints(userGroupPicks, standings, rankingPoints) {
+function calculateTotalPointsGroup(userGroupPicks, standings, rankingPoints) {
   let totalPoints = 0;
 
   const groups = userGroupPicks;
