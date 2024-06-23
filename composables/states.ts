@@ -1,26 +1,8 @@
-// import type { COUNTRIES } from "~/constants"
-
 type User = {
   email: string
   password: string
   name: string
 }
-
-// type UserGroupPicks = {
-//   user: User,
-//   groupPicks: GroupPicks[]
-// }
-
-// type GroupPicks = {
-//   group: 'A' | 'B' | 'C' | 'D' | 'E' | 'F'
-//   picks: Picks
-// }
-
-// type Picks = Pick[]
-
-// type Pick = {
-//   country: COUNTRIES
-// }
 
 export const useUsers = () => useState<User[]>('users', () => ([
   {
@@ -49,8 +31,5 @@ export const useUsers = () => useState<User[]>('users', () => ([
     name: 'Nils'
   }
 ]))
-
-// export const useUserGroupPicks = () => useState<UserGroupPicks>('userGroupPicks', () => undefined)
-
 
 export const useUser = () => useState<User | undefined>('user', () => undefined)

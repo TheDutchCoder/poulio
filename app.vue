@@ -1,7 +1,10 @@
 <template>
-  <div class="bg-gray-50 min-w-screen min-h-screen p-8 text-slate-800 flex">
+  <!-- <div class="bg-gray-50 min-w-screen min-h-screen p-8 text-slate-800 flex"> -->
+    <!-- <header class="sticky top-0 left-0 right-0 bg-white">hi</header> -->
+  <NuxtLayout>
     <NuxtPage />
-  </div>
+  </NuxtLayout>
+  <!-- </div> -->
 </template>
 
 <script setup>
