@@ -1,5 +1,5 @@
 export const RANKING_POINTS_GROUP = [2, 2, 1, 1]
-export const RANKING_POINTS_PLAYOFFS = [1, 2, 4, 8]
+export const RANKING_POINTS_PLAYOFFS = [2, 4, 8, 16]
 
 export const COUNTRIES = {
   GER: {
@@ -98,6 +98,10 @@ export const COUNTRIES = {
     flag: '🇬🇪',
     name: 'Georgia'
   },
+  TBD: {
+    flag: '🏴',
+    name: 'TBD'
+  },
 }
 export type COUNTRIES = keyof typeof COUNTRIES
 
@@ -142,6 +146,12 @@ export const USER_GROUP_PICKS = {
     'E': [COUNTRIES.BEL, COUNTRIES.UKR, COUNTRIES.SLV, COUNTRIES.ROM],
     'F': [COUNTRIES.POR, COUNTRIES.CZE, COUNTRIES.TUR, COUNTRIES.GEO],
   },
+}
+
+export const USER_PLAYOFF_PICKS = {
+  'Reinier': {
+    1: [COUNTRIES.SWI]
+  }
 }
 
 export const STANDINGS = {
@@ -301,4 +311,15 @@ export const STANDINGS = {
       eliminated: false,
     }
   ]
+}
+
+export const PLAYOFFS = {
+  1: [COUNTRIES.SWI, COUNTRIES.TBD],
+  2: [COUNTRIES.TBD, COUNTRIES.TBD],
+  3: [COUNTRIES.TBD, COUNTRIES.TBD],
+  4: [COUNTRIES.TBD, COUNTRIES.TBD],
+  5: [COUNTRIES.GER, COUNTRIES.TBD],
+  6: [COUNTRIES.SPA, COUNTRIES.TBD],
+  7: [COUNTRIES.TBD, COUNTRIES.TBD],
+  8: [COUNTRIES.POR, COUNTRIES.TBD],
 }

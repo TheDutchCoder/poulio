@@ -51,7 +51,9 @@ async function login() {
 
   const foundUser = users.value.find(user => user.email === shaEmail && user.password === shaPassword)
 
-  const userCookie = useCookie('poulio_user')
+  const userCookie = useCookie('poulio_user', {
+    expires: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000) // 60 days from now
+  })
   userCookie.value = foundUser
 
   if (foundUser) {
