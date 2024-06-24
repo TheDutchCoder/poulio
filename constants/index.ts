@@ -184,27 +184,27 @@ export const STANDINGS = {
   'B': [
     {
       country: COUNTRIES.SPA,
-      points: 6,
+      points: 9,
       qualified: true,
       eliminated: false,
     },
     {
       country: COUNTRIES.ITA,
-      points: 3,
-      qualified: false,
+      points: 4,
+      qualified: true,
       eliminated: false,
+    },
+    {
+      country: COUNTRIES.CRO,
+      points: 2,
+      qualified: false,
+      eliminated: true,
     },
     {
       country: COUNTRIES.ALB,
       points: 1,
       qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.CRO,
-      points: 0,
-      qualified: false,
-      eliminated: false,
+      eliminated: true,
     }
   ],
   'C': [
