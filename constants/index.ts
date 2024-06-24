@@ -237,13 +237,13 @@ export const STANDINGS = {
     {
       country: COUNTRIES.NED,
       points: 4,
-      qualified: false,
+      qualified: true,
       eliminated: false,
     },
     {
       country: COUNTRIES.FRA,
       points: 4,
-      qualified: false,
+      qualified: true,
       eliminated: false,
     },
     {

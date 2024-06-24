@@ -23,12 +23,12 @@
               <tbody class="divide-y border-t">
                 <tr v-for="(pick, index) in group" :key="pick.name" :class="{ 'bg-green-50': STANDINGS[key][index].country.name === pick.name }">
                   <td class="relative py-2 pl-3 text-center text-xl">
-                    <span v-if="STANDINGS[key][index].qualified" class="absolute top-0 left-0 bottom-0 w-1 bg-green-500"></span>
-                    <span v-if="!STANDINGS[key][index].qualified && !STANDINGS[key][index].eliminated" class="absolute top-0 left-0 bottom-0 w-1 bg-amber-500"></span>
-                    <span v-if="STANDINGS[key][index].eliminated" class="absolute top-0 left-0 bottom-0 w-1 bg-red-500"></span>
+                    <span v-if="STANDINGS[key].find(entry => entry.country.name === pick.name).qualified" class="absolute top-0 left-0 bottom-0 w-1 bg-green-500"></span>
+                    <span v-if="!STANDINGS[key].find(entry => entry.country.name === pick.name).qualified && !STANDINGS[key].find(entry => entry.country.name === pick.name).eliminated" class="absolute top-0 left-0 bottom-0 w-1 bg-amber-500"></span>
+                    <span v-if="STANDINGS[key].find(entry => entry.country.name === pick.name).eliminated" class="absolute top-0 left-0 bottom-0 w-1 bg-red-500"></span>
                     {{ pick.flag }}
                   </td>
-                  <td class="py-2 px-3 w-full" :class="{ 'line-through text-slate-400': STANDINGS[key][index].eliminated, 'font-semibold': STANDINGS[key][index].qualified }">{{ pick.name }}</td>
+                  <td class="py-2 px-3 w-full" :class="{ 'line-through text-slate-400': STANDINGS[key].find(entry => entry.country.name === pick.name).eliminated, 'font-semibold': STANDINGS[key].find(entry => entry.country.name === pick.name).qualified }">{{ pick.name }}</td>
                   <td class="py-2 px-3 text-center text-sm w-12">
                     <span v-if="STANDINGS[key][index].country.name === pick.name" class="inline-flex justify-center items-center w-5 h-5 text-xs rounded-full bg-green-200 text-green-800">{{ RANKING_POINTS_GROUP[index] }}</span>
                     <span v-else class="inline-flex justify-center items-center w-5 h-5 text-xs rounded-full bg-gray-200 text-slate-800 shadow-inner">0</span>
