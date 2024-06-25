@@ -1,5 +1,5 @@
 <template>
-  <div class="rounded-lg border p-6 bg-white">
+  <div class="rounded-lg border p-4 lg:p-6 bg-white">
     <div @click="toggle" class="flex cursor-pointer items-center group">
       <div>
         <slot name="header"></slot>

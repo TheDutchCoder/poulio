@@ -16,8 +16,9 @@
             <table class="w-full">
               <thead class="text-left bg-gray-50">
                 <tr>
-                  <th colspan="2" class="py-2 px-3 w-8 text-lg font-semibold">Group {{ key }}</th>
-                  <th class="py-2 px-3 text-right font-semibold">Score</th>
+                  <th colspan="2" class="py-2 px-2 text-lg font-semibold">Group {{ key }}</th>
+                  <th class="py-2 px-2 text-right font-semibold">Pts</th>
+                  <th colspan="3" class="border-l py-2 px-2 text-left text-slate-600 font-normal">Standings</th>
                 </tr>
               </thead>
               <tbody class="divide-y border-t">
@@ -28,11 +29,14 @@
                     <span v-if="STANDINGS[key].find(entry => entry.country.name === pick.name).eliminated" class="absolute top-0 left-0 bottom-0 w-1 bg-red-500"></span>
                     {{ pick.flag }}
                   </td>
-                  <td class="py-2 px-3 w-full" :class="{ 'line-through text-slate-400': STANDINGS[key].find(entry => entry.country.name === pick.name).eliminated, 'font-semibold': STANDINGS[key].find(entry => entry.country.name === pick.name).qualified }">{{ pick.name }}</td>
-                  <td class="py-2 px-3 text-center text-sm w-12">
+                  <td class="py-2 px-2 w-full" :class="{ 'line-through text-slate-400': STANDINGS[key].find(entry => entry.country.name === pick.name).eliminated, 'font-semibold': STANDINGS[key].find(entry => entry.country.name === pick.name).qualified }">{{ pick.name }}</td>
+                  <td class="py-2 px-1 text-center text-sm">
                     <span v-if="STANDINGS[key][index].country.name === pick.name" class="inline-flex justify-center items-center w-5 h-5 text-xs rounded-full bg-green-200 text-green-800">{{ RANKING_POINTS_GROUP[index] }}</span>
                     <span v-else class="inline-flex justify-center items-center w-5 h-5 text-xs rounded-full bg-gray-200 text-slate-800 shadow-inner">0</span>
                   </td>
+                  <td class="border-l relative py-2 pl-2 text-center text-xl">{{ STANDINGS[key][index].country.flag }}</td>
+                  <td class="py-2 px-2 w-full" :class="{ 'line-through text-slate-400': STANDINGS[key][index].eliminated, 'font-semibold': STANDINGS[key][index].qualified }">{{ STANDINGS[key][index].country.name }}</td>
+                  <td class="py-2 px-2 text-center text-sm w-12">{{ STANDINGS[key][index].points }}</td>
                 </tr>
               </tbody>
             </table>
@@ -60,22 +64,22 @@
             <table class="w-full">
               <thead class="text-left bg-gray-50">
                 <tr>
-                  <th colspan="2" class="py-2 px-3 w-8 text-lg font-semibold">Group {{ key }}</th>
-                  <th class="py-2 px-3 text-right font-semibold">Score</th>
+                  <th colspan="2" class="py-2 px-2 w-8 text-lg font-semibold">Group {{ key }}</th>
+                  <th class="py-2 px-2 text-right font-semibold">Score</th>
                 </tr>
               </thead>
               <tbody class="divide-y border-t">
                 <tr>
                   <td class="relative py-2 pl-3 text-center text-xl">{{ PLAYOFFS[key][0].flag }}</td>
-                  <td class="py-2 px-3 w-full">{{ PLAYOFFS[key][0].name }}</td>
-                  <td class="py-2 px-3 text-center text-sm w-12">
+                  <td class="py-2 px-2 w-full">{{ PLAYOFFS[key][0].name }}</td>
+                  <td class="py-2 px-2 text-center text-sm w-12">
                     <!-- <span class="inline-flex justify-center items-center w-5 h-5 text-xs rounded-full bg-green-200 text-green-800">2</span> -->
                   </td>
                 </tr>
                 <tr>
                   <td class="relative py-2 pl-3 text-center text-xl">{{ PLAYOFFS[key][1].flag }}</td>
-                  <td class="py-2 px-3 w-full">{{ PLAYOFFS[key][1].name }}</td>
-                  <td class="py-2 px-3 text-center text-sm w-12">
+                  <td class="py-2 px-2 w-full">{{ PLAYOFFS[key][1].name }}</td>
+                  <td class="py-2 px-2 text-center text-sm w-12">
                     <!-- <span class="inline-flex justify-center items-center w-5 h-5 text-xs rounded-full bg-green-200 text-green-800">2</span> -->
                   </td>
                 </tr>
