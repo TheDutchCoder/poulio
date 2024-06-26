@@ -210,27 +210,27 @@ export const STANDINGS = {
   'C': [
     {
       country: COUNTRIES.ENG,
-      points: 4,
-      qualified: false,
+      points: 5,
+      qualified: true,
       eliminated: false,
     },
     {
       country: COUNTRIES.DEN,
-      points: 2,
-      qualified: false,
+      points: 3,
+      qualified: true,
       eliminated: false,
     },
     {
       country: COUNTRIES.SLO,
-      points: 2,
+      points: 3,
       qualified: false,
       eliminated: false,
     },
     {
       country: COUNTRIES.SER,
-      points: 1,
+      points: 2,
       qualified: false,
-      eliminated: false,
+      eliminated: true,
     }
   ],
   'D': [
@@ -315,10 +315,10 @@ export const STANDINGS = {
 
 export const PLAYOFFS = {
   1: [COUNTRIES.SWI, COUNTRIES.ITA],
-  2: [COUNTRIES.TBD, COUNTRIES.TBD],
+  2: [COUNTRIES.ENG, COUNTRIES.TBD],
   3: [COUNTRIES.TBD, COUNTRIES.TBD],
   4: [COUNTRIES.AUS, COUNTRIES.TBD],
-  5: [COUNTRIES.GER, COUNTRIES.TBD],
+  5: [COUNTRIES.GER, COUNTRIES.DEN],
   6: [COUNTRIES.SPA, COUNTRIES.TBD],
   7: [COUNTRIES.FRA, COUNTRIES.TBD],
   8: [COUNTRIES.POR, COUNTRIES.TBD],
