@@ -25,15 +25,15 @@
               <tbody class="divide-y border-t">
                 <tr>
                   <td class="relative py-2 pl-3 text-center text-xl">{{ ROUND_OF_16[key][0].flag }}</td>
-                  <td class="py-2 px-2 w-full">{{ ROUND_OF_16[key][0].name }}</td>
-                  <td class="py-2 px-2 text-center text-sm w-12">{{ playoffPicks[key][ROUND_OF_16[key][0].name] }}</td>
+                  <td class="py-2 px-2 w-full" :class="{ 'font-semibold': ROUND_OF_16[key][0].name === playoffPicks[key].winner.name }">{{ ROUND_OF_16[key][0].name }}</td>
+                  <td class="py-2 px-2 text-center text-sm w-12">{{ playoffPicks[key].scores[ROUND_OF_16[key][0].name] }}</td>
                   <td class="py-2 px-2 text-center text-sm w-12">-</td>
                   <td class="py-2 px-2 text-center text-sm w-12 border-l" rowspan="2"><span class="inline-flex justify-center items-center w-5 h-5 text-xs rounded-full bg-gray-200 text-slate-800 shadow-inner">-</span></td>
                 </tr>
                 <tr>
                   <td class="relative py-2 pl-3 text-center text-xl">{{ ROUND_OF_16[key][1].flag }}</td>
-                  <td class="py-2 px-2 w-full">{{ ROUND_OF_16[key][1].name }}</td>
-                  <td class="py-2 px-2 text-center text-sm w-12">{{ playoffPicks[key][ROUND_OF_16[key][1].name] }}</td>
+                  <td class="py-2 px-2 w-full" :class="{ 'font-semibold': ROUND_OF_16[key][1].name === playoffPicks[key].winner.name }">{{ ROUND_OF_16[key][1].name }}</td>
+                  <td class="py-2 px-2 text-center text-sm w-12">{{ playoffPicks[key].scores[[ROUND_OF_16[key][1].name]] }}</td>
                   <td class="py-2 px-2 text-center text-sm w-12">-</td>
                 </tr>
               </tbody>
@@ -96,7 +96,7 @@
       <template #content>
         <div class="grid cols-1 gap-4 mt-4 md:grid-cols-2 lg:grid-cols-3">
           <ol class="rounded bg-white border divide-y overflow-hidden">
-            <li v-for="(entry, index) in groupStandings" :key="entry.user" class="py-2 px-4 inline-flex items-center gap-2 relative w-full" :class="entry.user === user.name ? 'bg-indigo-50 text-indigo-700 font-semibold' : ''">
+            <li v-for="(entry, index) in groupStandings" :key="entry.user" class="py-2 px-4 inline-flex items-center gap-2 relative w-full" :class="entry.user === user.name ? 'bg-indigo-50 text-indigo-700 font-semibold' : ''" @click="switchUser(entry.user)">
               <span>{{ entry.user }}</span>
               <span v-if="index === 0">🥇</span>
               <span v-if="index === 1">🥈</span>
@@ -108,6 +108,7 @@
       </template>
     </CollapsibleArea>
 
+    <div v-if="isMasquerading" class="sticky bottom-4 left-4 right-4 z-10 p-2 bg-gradient-to-br from-indigo-500 to-indigo-600 font-semibold text-white text-center">Masquerading</div>
   </div>
 </template>
 
@@ -214,5 +215,20 @@ function calculateTotalPointsGroup(userGroupPicks, GROUP_STANDINGS, rankingPoint
   }
 
   return totalPoints
+}
+
+const isMasquerading = computed(() => {
+  const userCookie = useCookie('poulio_user')
+
+  return userCookie.value.name == 'Reinier' && user.value.name !== 'Reinier'
+})
+
+function switchUser(name) {
+  if (user.value.name !== 'Reinier' && !isMasquerading.value) {
+    return
+  }
+
+  const users = useUsers()
+  user.value = users.value.find(user => user.name === name)
 }
 </script>
