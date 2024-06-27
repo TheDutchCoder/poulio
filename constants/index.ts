@@ -1,5 +1,5 @@
 export const RANKING_POINTS_GROUP = [2, 2, 1, 1]
-export const RANKING_POINTS_PLAYOFFS = [2, 4, 8, 16]
+export const RANKING_POINTS_ROUND_OF_16 = [4, 2]
 
 export const COUNTRIES = {
   GER: {
@@ -146,15 +146,17 @@ export const USER_GROUP_PICKS = {
     'E': [COUNTRIES.BEL, COUNTRIES.UKR, COUNTRIES.SLV, COUNTRIES.ROM],
     'F': [COUNTRIES.POR, COUNTRIES.CZE, COUNTRIES.TUR, COUNTRIES.GEO],
   },
+  'Michael': {
+    'A': [COUNTRIES.TBD, COUNTRIES.TBD, COUNTRIES.TBD, COUNTRIES.TBD],
+    'B': [COUNTRIES.TBD, COUNTRIES.TBD, COUNTRIES.TBD, COUNTRIES.TBD],
+    'C': [COUNTRIES.TBD, COUNTRIES.TBD, COUNTRIES.TBD, COUNTRIES.TBD],
+    'D': [COUNTRIES.TBD, COUNTRIES.TBD, COUNTRIES.TBD, COUNTRIES.TBD],
+    'E': [COUNTRIES.TBD, COUNTRIES.TBD, COUNTRIES.TBD, COUNTRIES.TBD],
+    'F': [COUNTRIES.TBD, COUNTRIES.TBD, COUNTRIES.TBD, COUNTRIES.TBD],
+  },
 }
 
-export const USER_PLAYOFF_PICKS = {
-  'Reinier': {
-    1: [COUNTRIES.SWI]
-  }
-}
-
-export const STANDINGS = {
+export const GROUP_STANDINGS = {
   'A': [
     {
       country: COUNTRIES.GER,
@@ -294,32 +296,274 @@ export const STANDINGS = {
     },
     {
       country: COUNTRIES.TUR,
-      points: 3,
-      qualified: false,
+      points: 6,
+      qualified: true,
+      eliminated: false,
+    },
+    {
+      country: COUNTRIES.GEO,
+      points: 4,
+      qualified: true,
       eliminated: false,
     },
     {
       country: COUNTRIES.CZE,
       points: 1,
       qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.GEO,
-      points: 1,
-      qualified: false,
-      eliminated: false,
+      eliminated: true,
     }
   ]
 }
 
-export const PLAYOFFS = {
+export const ROUND_OF_16 = {
   1: [COUNTRIES.SWI, COUNTRIES.ITA],
-  2: [COUNTRIES.ENG, COUNTRIES.TBD],
-  3: [COUNTRIES.ROM, COUNTRIES.TBD],
-  4: [COUNTRIES.AUS, COUNTRIES.TBD],
+  2: [COUNTRIES.ENG, COUNTRIES.SLV],
+  3: [COUNTRIES.ROM, COUNTRIES.NED],
+  4: [COUNTRIES.AUS, COUNTRIES.TUR],
   5: [COUNTRIES.GER, COUNTRIES.DEN],
-  6: [COUNTRIES.SPA, COUNTRIES.TBD],
+  6: [COUNTRIES.SPA, COUNTRIES.GEO],
   7: [COUNTRIES.FRA, COUNTRIES.BEL],
-  8: [COUNTRIES.POR, COUNTRIES.TBD],
+  8: [COUNTRIES.POR, COUNTRIES.SLO],
+}
+
+export const USER_ROUND_OF_16_PICKS = {
+  'Reinier': {
+    1: {
+      [COUNTRIES.SWI.name]: 1,
+      [COUNTRIES.ITA.name]: 2
+    },
+    2: {
+      [COUNTRIES.ENG.name]: 1,
+      [COUNTRIES.SLV.name]: 0
+    },
+    3: {
+      [COUNTRIES.ROM.name]: 0,
+      [COUNTRIES.NED.name]: 2
+    },
+    4: {
+      [COUNTRIES.AUS.name]: 3,
+      [COUNTRIES.TUR.name]: 2
+    },
+    5: {
+      [COUNTRIES.GER.name]: 2,
+      [COUNTRIES.DEN.name]: 1
+    },
+    6: {
+      [COUNTRIES.SPA.name]: 4,
+      [COUNTRIES.GEO.name]: 0
+    },
+    7: {
+      [COUNTRIES.FRA.name]: 3,
+      [COUNTRIES.BEL.name]: 1
+    },
+    8: {
+      [COUNTRIES.POR.name]: 3,
+      [COUNTRIES.SLO.name]: 0
+    }
+  },
+  'Tom': {
+    1: {
+      [COUNTRIES.SWI.name]: 0,
+      [COUNTRIES.ITA.name]: 0
+    },
+    2: {
+      [COUNTRIES.ENG.name]: 0,
+      [COUNTRIES.SLV.name]: 0
+    },
+    3: {
+      [COUNTRIES.ROM.name]: 0,
+      [COUNTRIES.NED.name]: 0
+    },
+    4: {
+      [COUNTRIES.AUS.name]: 0,
+      [COUNTRIES.TUR.name]: 0
+    },
+    5: {
+      [COUNTRIES.GER.name]: 0,
+      [COUNTRIES.DEN.name]: 0
+    },
+    6: {
+      [COUNTRIES.SPA.name]: 0,
+      [COUNTRIES.GEO.name]: 0
+    },
+    7: {
+      [COUNTRIES.FRA.name]: 0,
+      [COUNTRIES.BEL.name]: 0
+    },
+    8: {
+      [COUNTRIES.POR.name]: 0,
+      [COUNTRIES.SLO.name]: 0
+    }
+  },
+  'Wilco': {
+    1: {
+      [COUNTRIES.SWI.name]: 2,
+      [COUNTRIES.ITA.name]: 1
+    },
+    2: {
+      [COUNTRIES.ENG.name]: 1,
+      [COUNTRIES.SLV.name]: 0
+    },
+    3: {
+      [COUNTRIES.ROM.name]: 1,
+      [COUNTRIES.NED.name]: 2
+    },
+    4: {
+      [COUNTRIES.AUS.name]: 2,
+      [COUNTRIES.TUR.name]: 1
+    },
+    5: {
+      [COUNTRIES.GER.name]: 1,
+      [COUNTRIES.DEN.name]: 0
+    },
+    6: {
+      [COUNTRIES.SPA.name]: 3,
+      [COUNTRIES.GEO.name]: 0
+    },
+    7: {
+      [COUNTRIES.FRA.name]: 1,
+      [COUNTRIES.BEL.name]: 2
+    },
+    8: {
+      [COUNTRIES.POR.name]: 3,
+      [COUNTRIES.SLO.name]: 1
+    }
+  },
+  'Peter': {
+    1: {
+      [COUNTRIES.SWI.name]: 0,
+      [COUNTRIES.ITA.name]: 0
+    },
+    2: {
+      [COUNTRIES.ENG.name]: 0,
+      [COUNTRIES.SLV.name]: 0
+    },
+    3: {
+      [COUNTRIES.ROM.name]: 0,
+      [COUNTRIES.NED.name]: 0
+    },
+    4: {
+      [COUNTRIES.AUS.name]: 0,
+      [COUNTRIES.TUR.name]: 0
+    },
+    5: {
+      [COUNTRIES.GER.name]: 0,
+      [COUNTRIES.DEN.name]: 0
+    },
+    6: {
+      [COUNTRIES.SPA.name]: 0,
+      [COUNTRIES.GEO.name]: 0
+    },
+    7: {
+      [COUNTRIES.FRA.name]: 0,
+      [COUNTRIES.BEL.name]: 0
+    },
+    8: {
+      [COUNTRIES.POR.name]: 0,
+      [COUNTRIES.SLO.name]: 0
+    }
+  },
+  'Nils': {
+    1: {
+      [COUNTRIES.SWI.name]: 0,
+      [COUNTRIES.ITA.name]: 0
+    },
+    2: {
+      [COUNTRIES.ENG.name]: 0,
+      [COUNTRIES.SLV.name]: 0
+    },
+    3: {
+      [COUNTRIES.ROM.name]: 0,
+      [COUNTRIES.NED.name]: 0
+    },
+    4: {
+      [COUNTRIES.AUS.name]: 0,
+      [COUNTRIES.TUR.name]: 0
+    },
+    5: {
+      [COUNTRIES.GER.name]: 0,
+      [COUNTRIES.DEN.name]: 0
+    },
+    6: {
+      [COUNTRIES.SPA.name]: 0,
+      [COUNTRIES.GEO.name]: 0
+    },
+    7: {
+      [COUNTRIES.FRA.name]: 0,
+      [COUNTRIES.BEL.name]: 0
+    },
+    8: {
+      [COUNTRIES.POR.name]: 0,
+      [COUNTRIES.SLO.name]: 0
+    }
+  },
+  'Michael': {
+    1: {
+      [COUNTRIES.SWI.name]: 0,
+      [COUNTRIES.ITA.name]: 0
+    },
+    2: {
+      [COUNTRIES.ENG.name]: 0,
+      [COUNTRIES.SLV.name]: 0
+    },
+    3: {
+      [COUNTRIES.ROM.name]: 0,
+      [COUNTRIES.NED.name]: 0
+    },
+    4: {
+      [COUNTRIES.AUS.name]: 0,
+      [COUNTRIES.TUR.name]: 0
+    },
+    5: {
+      [COUNTRIES.GER.name]: 0,
+      [COUNTRIES.DEN.name]: 0
+    },
+    6: {
+      [COUNTRIES.SPA.name]: 0,
+      [COUNTRIES.GEO.name]: 0
+    },
+    7: {
+      [COUNTRIES.FRA.name]: 0,
+      [COUNTRIES.BEL.name]: 0
+    },
+    8: {
+      [COUNTRIES.POR.name]: 0,
+      [COUNTRIES.SLO.name]: 0
+    }
+  },
+}
+
+export const ROUND_OF_16_RESULTS = {
+  1: {
+    [COUNTRIES.SWI.name]: 0,
+    [COUNTRIES.ITA.name]: 2
+  },
+  2: {
+    [COUNTRIES.ENG.name]: 0,
+    [COUNTRIES.SLV.name]: 0
+  },
+  3: {
+    [COUNTRIES.ROM.name]: 0,
+    [COUNTRIES.NED.name]: 0
+  },
+  4: {
+    [COUNTRIES.AUS.name]: 0,
+    [COUNTRIES.TUR.name]: 0
+  },
+  5: {
+    [COUNTRIES.GER.name]: 0,
+    [COUNTRIES.DEN.name]: 0
+  },
+  6: {
+    [COUNTRIES.SPA.name]: 0,
+    [COUNTRIES.GEO.name]: 0
+  },
+  7: {
+    [COUNTRIES.FRA.name]: 0,
+    [COUNTRIES.BEL.name]: 0
+  },
+  8: {
+    [COUNTRIES.POR.name]: 0,
+    [COUNTRIES.SLO.name]: 0
+  }
 }

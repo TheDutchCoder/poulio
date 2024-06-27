@@ -29,6 +29,11 @@ export const useUsers = () => useState<User[]>('users', () => ([
     email: 'bd61114e08bd01fbd2ad9b07906bd557d67184b1',
     password: '1b4f2b56251e513a53ce6e905e824a90521fbdbf',
     name: 'Nils'
+  },
+  {
+    email: '0c160a1e657a6e6ab1658bb9f9e3425d24edb34f',
+    password: '774e7f6b488b02111c39012481f4a604bcff7245',
+    name: 'Michael'
   }
 ]))
 
