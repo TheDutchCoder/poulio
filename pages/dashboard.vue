@@ -11,19 +11,19 @@
         </ul>
       </template>
       <template #content>
-        <div class="grid cols-1 gap-6 mt-8 md:grid-cols-2 lg:grid-cols-4">
+        <div class="grid cols-1 gap-6 mt-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           <div v-for="(group, key) in ROUND_OF_16" :key="key" class="border rounded-lg overflow-hidden">
             <table class="w-full">
               <thead class="text-left bg-gray-50">
                 <tr>
                   <th colspan="2" class="py-2 px-2 w-8 text-lg font-semibold">Group {{ key }}</th>
-                  <th class="py-2 px-2 text-right font-semibold">Prediction</th>
-                  <th class="py-2 px-2 text-right font-semibold">Result</th>
+                  <th class="py-2 px-2 text-right font-semibold">Pred</th>
+                  <th class="py-2 px-2 text-right font-semibold">Res</th>
                   <th class="py-2 px-2 text-right font-semibold">Pts</th>
                 </tr>
               </thead>
               <tbody class="divide-y border-t">
-                <tr :class="{ 'bg-green-100': ROUND_OF_16_RESULTS[key].winner.name === playoffPicks[key].winner.name && ROUND_OF_16_RESULTS[key].winner.name !== 'TBD' }">
+                <tr :class="{ 'bg-green-50': ROUND_OF_16_RESULTS[key].winner.name === playoffPicks[key].winner.name && ROUND_OF_16_RESULTS[key].winner.name !== 'TBD' }">
                   <td class="relative py-2 pl-3 text-center text-xl">
                     <span v-if="ROUND_OF_16_RESULTS[key].winner.name === playoffPicks[key].winner.name && ROUND_OF_16_RESULTS[key].winner.name !== 'TBD'" class="absolute top-0 left-0 bottom-0 w-1 bg-green-500"></span>
                     {{ ROUND_OF_16[key][0].flag }}
@@ -31,7 +31,10 @@
                   <td class="py-2 px-2 w-full" :class="{ 'font-semibold': ROUND_OF_16[key][0].name === playoffPicks[key].winner.name }">{{ ROUND_OF_16[key][0].name }}</td>
                   <td class="py-2 px-2 text-center text-sm w-12">{{ playoffPicks[key].scores[ROUND_OF_16[key][0].name] }}</td>
                   <td class="py-2 px-2 text-center text-sm w-12">{{ ROUND_OF_16_RESULTS[key].scores[ROUND_OF_16[key][0].name] }}</td>
-                  <td class="py-2 px-2 text-center text-sm w-12 border-l bg-white" rowspan="2"><span class="inline-flex justify-center items-center w-5 h-5 text-xs rounded-full bg-gray-200 text-slate-800 shadow-inner">{{ getPointsForGroup(playoffPicks[key], ROUND_OF_16_RESULTS[key]) }}</span></td>
+                  <td class="py-2 px-2 text-center text-sm w-12 border-l bg-white" rowspan="2">
+                    <span v-if="getPointsForGroup(playoffPicks[key], ROUND_OF_16_RESULTS[key]) > 0" class="inline-flex justify-center items-center w-5 h-5 text-xs rounded-full bg-green-200 text-green-800">{{ getPointsForGroup(playoffPicks[key], ROUND_OF_16_RESULTS[key]) }}</span>
+                    <span v-else class="inline-flex justify-center items-center w-5 h-5 text-xs rounded-full bg-gray-200 text-slate-800 shadow-inner">0</span>
+                  </td>
                 </tr>
                 <tr :class="{ 'bg-red-100': playoffPicks[key].winner.name == ROUND_OF_16[key][1].name && ROUND_OF_16[key][1].name !== ROUND_OF_16_RESULTS[key].winner.name && ROUND_OF_16_RESULTS[key].winner.name !== 'TBD' }">
                   <td class="relative py-2 pl-3 text-center text-xl">{{ ROUND_OF_16[key][1].flag }}</td>
