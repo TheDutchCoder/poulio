@@ -680,10 +680,10 @@ export const USER_ROUND_OF_16_PICKS = {
 export const ROUND_OF_16_RESULTS = {
   1: {
     scores: {
-      [COUNTRIES.SWI.name]: 0,
-      [COUNTRIES.ITA.name]: 2
+      [COUNTRIES.SWI.name]: 2,
+      [COUNTRIES.ITA.name]: 0
     },
-    winner: COUNTRIES.TBD
+    winner: COUNTRIES.SWI
   },
   2: {
     scores: {

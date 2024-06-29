@@ -7,7 +7,7 @@
           <h1 class="text-xl font-semibold lg:text-2xl">Round of 16 Picks for {{ user.name }}</h1>
         </div>
         <ul>
-          <li><span class="text-slate-500">(0 out of {{ maxRound16Points }} points)</span></li>
+          <li><span class="text-slate-500">({{ userRound16Points }} out of {{ maxRound16Points }} points)</span></li>
         </ul>
       </template>
       <template #content>
@@ -23,18 +23,21 @@
                 </tr>
               </thead>
               <tbody class="divide-y border-t">
-                <tr>
-                  <td class="relative py-2 pl-3 text-center text-xl">{{ ROUND_OF_16[key][0].flag }}</td>
+                <tr :class="{ 'bg-green-100': ROUND_OF_16_RESULTS[key].winner.name === playoffPicks[key].winner.name && ROUND_OF_16_RESULTS[key].winner.name !== 'TBD' }">
+                  <td class="relative py-2 pl-3 text-center text-xl">
+                    <span v-if="ROUND_OF_16_RESULTS[key].winner.name === playoffPicks[key].winner.name && ROUND_OF_16_RESULTS[key].winner.name !== 'TBD'" class="absolute top-0 left-0 bottom-0 w-1 bg-green-500"></span>
+                    {{ ROUND_OF_16[key][0].flag }}
+                  </td>
                   <td class="py-2 px-2 w-full" :class="{ 'font-semibold': ROUND_OF_16[key][0].name === playoffPicks[key].winner.name }">{{ ROUND_OF_16[key][0].name }}</td>
                   <td class="py-2 px-2 text-center text-sm w-12">{{ playoffPicks[key].scores[ROUND_OF_16[key][0].name] }}</td>
-                  <td class="py-2 px-2 text-center text-sm w-12">-</td>
-                  <td class="py-2 px-2 text-center text-sm w-12 border-l" rowspan="2"><span class="inline-flex justify-center items-center w-5 h-5 text-xs rounded-full bg-gray-200 text-slate-800 shadow-inner">-</span></td>
+                  <td class="py-2 px-2 text-center text-sm w-12">{{ ROUND_OF_16_RESULTS[key].scores[ROUND_OF_16[key][0].name] }}</td>
+                  <td class="py-2 px-2 text-center text-sm w-12 border-l bg-white" rowspan="2"><span class="inline-flex justify-center items-center w-5 h-5 text-xs rounded-full bg-gray-200 text-slate-800 shadow-inner">{{ getPointsForGroup(playoffPicks[key], ROUND_OF_16_RESULTS[key]) }}</span></td>
                 </tr>
-                <tr>
+                <tr :class="{ 'bg-red-100': playoffPicks[key].winner.name == ROUND_OF_16[key][1].name && ROUND_OF_16[key][1].name !== ROUND_OF_16_RESULTS[key].winner.name && ROUND_OF_16_RESULTS[key].winner.name !== 'TBD' }">
                   <td class="relative py-2 pl-3 text-center text-xl">{{ ROUND_OF_16[key][1].flag }}</td>
-                  <td class="py-2 px-2 w-full" :class="{ 'font-semibold': ROUND_OF_16[key][1].name === playoffPicks[key].winner.name }">{{ ROUND_OF_16[key][1].name }}</td>
+                  <td class="py-2 px-2 w-full" :class="{ 'font-semibold': ROUND_OF_16[key][1].name === playoffPicks[key].winner.name, 'line-through text-slate-400': ROUND_OF_16[key][1].name !== ROUND_OF_16_RESULTS[key].winner.name && ROUND_OF_16_RESULTS[key].winner.name !== 'TBD' }">{{ ROUND_OF_16[key][1].name }}</td>
                   <td class="py-2 px-2 text-center text-sm w-12">{{ playoffPicks[key].scores[[ROUND_OF_16[key][1].name]] }}</td>
-                  <td class="py-2 px-2 text-center text-sm w-12">-</td>
+                  <td class="py-2 px-2 text-center text-sm w-12">{{ ROUND_OF_16_RESULTS[key].scores[ROUND_OF_16[key][1].name] }}</td>
                 </tr>
               </tbody>
             </table>
@@ -146,53 +149,41 @@ const maxRound16Points = computed(() => {
   return RANKING_POINTS_ROUND_OF_16.reduce((accumulator, currentValue) => accumulator + currentValue, 0) * 8
 })
 const userRound16Points = computed(() => {
-  let points = 0
-  console.log(playoffPicks.value[1])
-  // console.log(ROUND_OF_16_RESULTS)
-  // console.log(RANKING_POINTS_ROUND_OF_16)
-  const userWinner = isWinner(playoffPicks.value[1])
-  const actualWinner = isWinner(ROUND_OF_16_RESULTS[1])
+  const userWinner = playoffPicks.value[1]
+  const actualWinner = ROUND_OF_16_RESULTS[1]
 
-  if (userWinner === actualWinner) {
-    points += RANKING_POINTS_ROUND_OF_16[0]
-  }
-
-  if (JSON.stringify(playoffPicks.value[1]) === JSON.stringify(ROUND_OF_16_RESULTS[1])) {
-    points += RANKING_POINTS_ROUND_OF_16[1]
-  }
-
-  console.log({
-    'userWinner': userWinner,
-    'actualWinner': actualWinner,
-    points
-  })
+  return get16Points(userWinner, actualWinner)
 })
-// const maxRound16Points = computed(() => RANKING_POINTS_ROUND_OF_16.reduce((acc, curr, ind) => {
-//   switch (ind) {
-//     case 0:
-//       return acc + (curr * 8)
-//     case 1:
-//       return acc + (curr * 4)
-//     case 2:
-//       return acc + (curr * 2)
-//     case 3:
-//       return acc + (curr)
-//   }
-// }, 0))
 
-function isWinner(bracket) {
-  const countryNames = Object.keys(bracket)  
+function get16Points(userWinner, actualWinner) {
+  let points = 0
 
-  return bracket[countryNames[0]] > bracket[countryNames[1]] ? countryNames[0] : countryNames[1]
+  if (userWinner.winner.name === actualWinner.winner.name && actualWinner.winner.name !== 'TBD') {
+    points += 4
+  }
+
+  if (JSON.stringify(userWinner.scores) === JSON.stringify(actualWinner.scores) && actualWinner.winner.name !== 'TBD') {
+    points += 2
+  }
+
+  return points
 }
 
 const groupStandings = computed(() => {
   const standings = []
+  let totalPoints = 0
+
   for (const user in USER_GROUP_PICKS) {
     const picks = USER_GROUP_PICKS[user];
-    const totalPoints = calculateTotalPointsGroup(picks, GROUP_STANDINGS, RANKING_POINTS_GROUP);
+    totalPoints = calculateTotalPointsGroup(picks, GROUP_STANDINGS, RANKING_POINTS_GROUP);
+
+    const picks16 = USER_ROUND_OF_16_PICKS[user];
+    for (const group in ROUND_OF_16_RESULTS) {
+      totalPoints += get16Points(picks16[group], ROUND_OF_16_RESULTS[group]);
+    }
+
     standings.push({ user, totalPoints });
-  }
+  }  
 
   return standings.sort((a, b) => b.totalPoints - a.totalPoints);
 });
@@ -230,5 +221,19 @@ function switchUser(name) {
 
   const users = useUsers()
   user.value = users.value.find(user => user.name === name)
+}
+
+function getPointsForGroup(group, results) {
+  let points = 0
+
+  if (group.winner.name === results.winner.name && results.winner.name !== 'TBD')  {
+    points += 4
+  }
+
+  if (JSON.stringify(group.scores) === JSON.stringify(results.scores) && results.winner.name !== 'TBD') {
+    points += 2
+  }
+
+  return points
 }
 </script>
