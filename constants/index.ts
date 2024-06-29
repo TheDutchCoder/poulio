@@ -1,5 +1,6 @@
 export const RANKING_POINTS_GROUP = [2, 2, 1, 1]
 export const RANKING_POINTS_ROUND_OF_16 = [4, 2]
+export const RANKING_POINTS_ROUND_OF_8 = [4, 2]
 
 export const COUNTRIES = {
   GER: {
@@ -731,6 +732,227 @@ export const ROUND_OF_16_RESULTS = {
     scores: {
       [COUNTRIES.POR.name]: 0,
       [COUNTRIES.SLO.name]: 0
+    },
+    winner: COUNTRIES.TBD
+  }
+}
+
+export const ROUND_OF_8 = {
+  1: [COUNTRIES.SWI, COUNTRIES.TBD],
+  2: [COUNTRIES.TBD, COUNTRIES.TBD],
+  3: [COUNTRIES.GER, COUNTRIES.TBD],
+  4: [COUNTRIES.TBD, COUNTRIES.TBD],
+}
+
+export const USER_ROUND_OF_8_PICKS = {
+  'Reinier': {
+    1: {
+      scores: {
+        [COUNTRIES.SWI.name]: 0,
+        [COUNTRIES.TBD.name]: 0
+      },
+      winner: COUNTRIES.TBD
+    },
+    2: {
+      scores: {
+        [COUNTRIES.TBD.name]: 0,
+        [COUNTRIES.TBD.name]: 0
+      },
+      winner: COUNTRIES.TBD
+    },
+    3: {
+      scores: {
+        [COUNTRIES.GER.name]: 0,
+        [COUNTRIES.TBD.name]: 0
+      },
+      winner: COUNTRIES.TBD
+    },
+    4: {
+      scores: {
+        [COUNTRIES.TBD.name]: 0,
+        [COUNTRIES.TBD.name]: 0
+      },
+      winner: COUNTRIES.TBD
+    }
+  },
+  'Tom': {
+    1: {
+      scores: {
+        [COUNTRIES.SWI.name]: 0,
+        [COUNTRIES.TBD.name]: 0
+      },
+      winner: COUNTRIES.TBD
+    },
+    2: {
+      scores: {
+        [COUNTRIES.TBD.name]: 0,
+        [COUNTRIES.TBD.name]: 0
+      },
+      winner: COUNTRIES.TBD
+    },
+    3: {
+      scores: {
+        [COUNTRIES.GER.name]: 0,
+        [COUNTRIES.TBD.name]: 0
+      },
+      winner: COUNTRIES.TBD
+    },
+    4: {
+      scores: {
+        [COUNTRIES.TBD.name]: 0,
+        [COUNTRIES.TBD.name]: 0
+      },
+      winner: COUNTRIES.TBD
+    }
+  },
+  'Wilco': {
+    1: {
+      scores: {
+        [COUNTRIES.SWI.name]: 0,
+        [COUNTRIES.TBD.name]: 0
+      },
+      winner: COUNTRIES.TBD
+    },
+    2: {
+      scores: {
+        [COUNTRIES.TBD.name]: 0,
+        [COUNTRIES.TBD.name]: 0
+      },
+      winner: COUNTRIES.TBD
+    },
+    3: {
+      scores: {
+        [COUNTRIES.GER.name]: 0,
+        [COUNTRIES.TBD.name]: 0
+      },
+      winner: COUNTRIES.TBD
+    },
+    4: {
+      scores: {
+        [COUNTRIES.TBD.name]: 0,
+        [COUNTRIES.TBD.name]: 0
+      },
+      winner: COUNTRIES.TBD
+    }
+  },
+  'Peter': {
+    1: {
+      scores: {
+        [COUNTRIES.SWI.name]: 0,
+        [COUNTRIES.TBD.name]: 0
+      },
+      winner: COUNTRIES.TBD
+    },
+    2: {
+      scores: {
+        [COUNTRIES.TBD.name]: 0,
+        [COUNTRIES.TBD.name]: 0
+      },
+      winner: COUNTRIES.TBD
+    },
+    3: {
+      scores: {
+        [COUNTRIES.GER.name]: 0,
+        [COUNTRIES.TBD.name]: 0
+      },
+      winner: COUNTRIES.TBD
+    },
+    4: {
+      scores: {
+        [COUNTRIES.TBD.name]: 0,
+        [COUNTRIES.TBD.name]: 0
+      },
+      winner: COUNTRIES.TBD
+    }
+  },
+  'Nils': {
+    1: {
+      scores: {
+        [COUNTRIES.SWI.name]: 0,
+        [COUNTRIES.TBD.name]: 0
+      },
+      winner: COUNTRIES.TBD
+    },
+    2: {
+      scores: {
+        [COUNTRIES.TBD.name]: 0,
+        [COUNTRIES.TBD.name]: 0
+      },
+      winner: COUNTRIES.TBD
+    },
+    3: {
+      scores: {
+        [COUNTRIES.GER.name]: 0,
+        [COUNTRIES.TBD.name]: 0
+      },
+      winner: COUNTRIES.TBD
+    },
+    4: {
+      scores: {
+        [COUNTRIES.TBD.name]: 0,
+        [COUNTRIES.TBD.name]: 0
+      },
+      winner: COUNTRIES.TBD
+    }
+  },
+  'Michael': {
+    1: {
+      scores: {
+        [COUNTRIES.SWI.name]: 0,
+        [COUNTRIES.TBD.name]: 0
+      },
+      winner: COUNTRIES.TBD
+    },
+    2: {
+      scores: {
+        [COUNTRIES.TBD.name]: 0,
+        [COUNTRIES.TBD.name]: 0
+      },
+      winner: COUNTRIES.TBD
+    },
+    3: {
+      scores: {
+        [COUNTRIES.GER.name]: 0,
+        [COUNTRIES.TBD.name]: 0
+      },
+      winner: COUNTRIES.TBD
+    },
+    4: {
+      scores: {
+        [COUNTRIES.TBD.name]: 0,
+        [COUNTRIES.TBD.name]: 0
+      },
+      winner: COUNTRIES.TBD
+    }
+  },
+}
+
+export const ROUND_OF_8_RESULTS = {
+  1: {
+    scores: {
+      [COUNTRIES.SWI.name]: 0,
+      [COUNTRIES.TBD.name]: 0
+    },
+    winner: COUNTRIES.TBD
+  },
+  2: {
+    scores: {
+      [COUNTRIES.TBD.name]: 0,
+      [COUNTRIES.TBD.name]: 0
+    },
+    winner: COUNTRIES.TBD
+  },
+  3: {
+    scores: {
+      [COUNTRIES.GER.name]: 0,
+      [COUNTRIES.TBD.name]: 0
+    },
+    winner: COUNTRIES.TBD
+  },
+  4: {
+    scores: {
+      [COUNTRIES.TBD.name]: 0,
+      [COUNTRIES.TBD.name]: 0
     },
     winner: COUNTRIES.TBD
   }
