@@ -708,10 +708,10 @@ export const ROUND_OF_16_RESULTS = {
   },
   5: {
     scores: {
-      [COUNTRIES.GER.name]: 0,
+      [COUNTRIES.GER.name]: 2,
       [COUNTRIES.DEN.name]: 0
     },
-    winner: COUNTRIES.TBD
+    winner: COUNTRIES.GER
   },
   6: {
     scores: {

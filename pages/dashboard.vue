@@ -149,10 +149,13 @@ const maxRound16Points = computed(() => {
   return RANKING_POINTS_ROUND_OF_16.reduce((accumulator, currentValue) => accumulator + currentValue, 0) * 8
 })
 const userRound16Points = computed(() => {
-  const userWinner = playoffPicks.value[1]
-  const actualWinner = ROUND_OF_16_RESULTS[1]
+  let score = 0
 
-  return get16Points(userWinner, actualWinner)
+  for (const group in playoffPicks.value) {
+    score += get16Points(playoffPicks.value[group], ROUND_OF_16_RESULTS[group])
+  }
+
+  return score
 })
 
 function get16Points(userWinner, actualWinner) {
