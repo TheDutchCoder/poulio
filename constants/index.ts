@@ -716,10 +716,10 @@ export const ROUND_OF_16_RESULTS = {
   },
   6: {
     scores: {
-      [COUNTRIES.SPA.name]: 0,
-      [COUNTRIES.GEO.name]: 0
+      [COUNTRIES.SPA.name]: 4,
+      [COUNTRIES.GEO.name]: 1
     },
-    winner: COUNTRIES.TBD
+    winner: COUNTRIES.SPA
   },
   7: {
     scores: {
@@ -738,9 +738,9 @@ export const ROUND_OF_16_RESULTS = {
 }
 
 export const ROUND_OF_8 = {
-  1: [COUNTRIES.SWI, COUNTRIES.TBD],
+  1: [COUNTRIES.ENG, COUNTRIES.SWI],
   2: [COUNTRIES.TBD, COUNTRIES.TBD],
-  3: [COUNTRIES.GER, COUNTRIES.TBD],
+  3: [COUNTRIES.SPA, COUNTRIES.GER],
   4: [COUNTRIES.TBD, COUNTRIES.TBD],
 }
 
