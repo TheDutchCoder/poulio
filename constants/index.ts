@@ -733,7 +733,7 @@ export const ROUND_OF_16_RESULTS = {
       [COUNTRIES.POR.name]: 0,
       [COUNTRIES.SLO.name]: 0
     },
-    winner: COUNTRIES.TBD
+    winner: COUNTRIES.POR
   }
 }
 
@@ -741,7 +741,7 @@ export const ROUND_OF_8 = {
   1: [COUNTRIES.ENG, COUNTRIES.SWI],
   2: [COUNTRIES.TBD, COUNTRIES.TBD],
   3: [COUNTRIES.SPA, COUNTRIES.GER],
-  4: [COUNTRIES.TBD, COUNTRIES.TBD],
+  4: [COUNTRIES.FRA, COUNTRIES.POR],
 }
 
 export const USER_ROUND_OF_8_PICKS = {
