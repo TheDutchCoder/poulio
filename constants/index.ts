@@ -723,10 +723,10 @@ export const ROUND_OF_16_RESULTS = {
   },
   7: {
     scores: {
-      [COUNTRIES.FRA.name]: 0,
+      [COUNTRIES.FRA.name]: 1,
       [COUNTRIES.BEL.name]: 0
     },
-    winner: COUNTRIES.TBD
+    winner: COUNTRIES.FRA
   },
   8: {
     scores: {
