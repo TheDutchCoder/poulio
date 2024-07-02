@@ -55,7 +55,7 @@
     </CollapsibleArea>
 
     <!-- Round of 16 Picks -->
-    <CollapsibleArea is-open>
+    <CollapsibleArea>
       <template #header>
         <div class="flex">
           <h1 class="text-xl font-semibold lg:text-2xl">Round of 16 Picks for {{ user.name }}</h1>
