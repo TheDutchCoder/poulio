@@ -702,10 +702,10 @@ export const ROUND_OF_16_RESULTS = {
   },
   4: {
     scores: {
-      [COUNTRIES.AUS.name]: 0,
-      [COUNTRIES.TUR.name]: 0
+      [COUNTRIES.AUS.name]: 1,
+      [COUNTRIES.TUR.name]: 2
     },
-    winner: COUNTRIES.TBD
+    winner: COUNTRIES.TUR
   },
   5: {
     scores: {
@@ -739,7 +739,7 @@ export const ROUND_OF_16_RESULTS = {
 
 export const ROUND_OF_8 = {
   1: [COUNTRIES.ENG, COUNTRIES.SWI],
-  2: [COUNTRIES.NED, COUNTRIES.TBD],
+  2: [COUNTRIES.NED, COUNTRIES.TUR],
   3: [COUNTRIES.SPA, COUNTRIES.GER],
   4: [COUNTRIES.FRA, COUNTRIES.POR],
 }
