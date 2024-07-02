@@ -1,7 +1,7 @@
 <template>
   <div v-if="user" class="w-full flex flex-col gap-4 lg:gap-8">
     <!-- Round of 8 Picks -->
-    <!-- <CollapsibleArea is-open>
+    <CollapsibleArea is-open>
       <template #header>
         <div class="flex">
           <h1 class="text-xl font-semibold lg:text-2xl">Round of 8 Picks for {{ user.name }}</h1>
@@ -23,7 +23,7 @@
                 </tr>
               </thead>
               <tbody class="divide-y border-t">
-                <tr :class="{ 'bg-green-50': isCountryGroupWinner(roundOf8[key], ROUND_OF_8_RESULTS[key]) && roundOf8[key].winner.name === ROUND_OF_8[key][0].name, 'bg-red-50': roundOf8[key].winner.name !== ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name !== ROUND_OF_8[key][0].name }">
+                <tr :class="{ 'bg-green-50': isCountryGroupWinner(roundOf8[key], ROUND_OF_8_RESULTS[key]) && roundOf8[key].winner.name === ROUND_OF_8[key][0].name && ROUND_OF_8_RESULTS[key].winner.name !== 'TBD', 'bg-red-50': roundOf8[key].winner.name !== ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name !== ROUND_OF_8[key][0].name && ROUND_OF_8_RESULTS[key].winner.name !== 'TBD' }">
                   <td class="relative py-2 pl-3 text-center text-xl">
                     <span v-if="roundOf8[key].winner.name === ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name === ROUND_OF_8[key][0].name" class="absolute top-0 left-0 bottom-0 w-1 bg-green-500"></span>
                     <span v-if="roundOf8[key].winner.name !== ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name !== ROUND_OF_8[key][0].name" class="absolute top-0 left-0 bottom-0 w-1 bg-red-500"></span>
@@ -37,7 +37,7 @@
                     <span v-else class="inline-flex justify-center items-center w-5 h-5 text-xs rounded-full bg-gray-200 text-slate-800 shadow-inner">0</span>
                   </td>
                 </tr>
-                <tr :class="{ 'bg-green-50': roundOf8[key].winner.name === ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name === ROUND_OF_8[key][1].name, 'bg-red-50': roundOf8[key].winner.name !== ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name !== ROUND_OF_8[key][1].name }">
+                <tr :class="{ 'bg-green-50': roundOf8[key].winner.name === ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name === ROUND_OF_8[key][1].name && ROUND_OF_8_RESULTS[key].winner.name !== 'TBD', 'bg-red-50': roundOf8[key].winner.name !== ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name !== ROUND_OF_8[key][1].name && ROUND_OF_8_RESULTS[key].winner.name !== 'TBD' }">
                   <td class="relative py-2 pl-3 text-center text-xl">
                     <span v-if="roundOf8[key].winner.name === ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name === ROUND_OF_8[key][1].name" class="absolute top-0 left-0 bottom-0 w-1 bg-green-500"></span>
                     <span v-if="roundOf8[key].winner.name !== ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name !== ROUND_OF_8[key][1].name" class="absolute top-0 left-0 bottom-0 w-1 bg-red-500"></span>
@@ -52,7 +52,7 @@
           </div>
         </div>
       </template>
-    </CollapsibleArea> -->
+    </CollapsibleArea>
 
     <!-- Round of 16 Picks -->
     <CollapsibleArea is-open>
