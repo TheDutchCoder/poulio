@@ -72,12 +72,13 @@
                 </tr>
               </thead>
               <tbody class="divide-y border-t">
-                <tr :class="{ 'bg-green-50': ROUND_OF_16_RESULTS[key].winner.name === roundOf16[key].winner.name && ROUND_OF_16_RESULTS[key].winner.name !== 'TBD' }">
+                <tr :class="{ 'bg-green-50': roundOf16[key].winner.name === ROUND_OF_16_RESULTS[key].winner.name && roundOf16[key].winner.name === ROUND_OF_16[key][0].name, 'bg-red-50': roundOf16[key].winner.name !== ROUND_OF_16_RESULTS[key].winner.name && roundOf16[key].winner.name !== ROUND_OF_16[key][0].name }">
                   <td class="relative py-2 pl-3 text-center text-xl">
-                    <span v-if="ROUND_OF_16_RESULTS[key].winner.name === roundOf16[key].winner.name && ROUND_OF_16_RESULTS[key].winner.name !== 'TBD'" class="absolute top-0 left-0 bottom-0 w-1 bg-green-500"></span>
+                    <span v-if="roundOf16[key].winner.name === ROUND_OF_16_RESULTS[key].winner.name && roundOf16[key].winner.name === ROUND_OF_16[key][0].name" class="absolute top-0 left-0 bottom-0 w-1 bg-green-500"></span>
+                    <span v-if="roundOf16[key].winner.name !== ROUND_OF_16_RESULTS[key].winner.name && roundOf16[key].winner.name !== ROUND_OF_16[key][0].name" class="absolute top-0 left-0 bottom-0 w-1 bg-red-500"></span>
                     {{ ROUND_OF_16[key][0].flag }}
                   </td>
-                  <td class="py-2 px-2 w-full" :class="{ 'font-semibold': ROUND_OF_16[key][0].name === roundOf16[key].winner.name }">{{ ROUND_OF_16[key][0].name }}</td>
+                  <td class="py-2 px-2 w-full" :class="{ 'font-semibold': ROUND_OF_16[key][0].name === roundOf16[key].winner.name, 'line-through text-slate-400': ROUND_OF_16[key][0].name !== ROUND_OF_16_RESULTS[key].winner.name && ROUND_OF_16_RESULTS[key].winner.name !== 'TBD' }">{{ ROUND_OF_16[key][0].name }}</td>
                   <td class="py-2 px-2 text-center text-sm w-12">{{ roundOf16[key].scores[ROUND_OF_16[key][0].name] }}</td>
                   <td class="py-2 px-2 text-center text-sm w-12">{{ ROUND_OF_16_RESULTS[key].scores[ROUND_OF_16[key][0].name] }}</td>
                   <td class="py-2 px-2 text-center text-sm w-12 border-l bg-white" rowspan="2">
@@ -85,8 +86,12 @@
                     <span v-else class="inline-flex justify-center items-center w-5 h-5 text-xs rounded-full bg-gray-200 text-slate-800 shadow-inner">0</span>
                   </td>
                 </tr>
-                <tr :class="{ 'bg-red-100': roundOf16[key].winner.name == ROUND_OF_16[key][1].name && ROUND_OF_16[key][1].name !== ROUND_OF_16_RESULTS[key].winner.name && ROUND_OF_16_RESULTS[key].winner.name !== 'TBD' }">
-                  <td class="relative py-2 pl-3 text-center text-xl">{{ ROUND_OF_16[key][1].flag }}</td>
+                <tr :class="{ 'bg-green-50': roundOf16[key].winner.name === ROUND_OF_16_RESULTS[key].winner.name && roundOf16[key].winner.name === ROUND_OF_16[key][1].name, 'bg-red-50': roundOf16[key].winner.name !== ROUND_OF_16_RESULTS[key].winner.name && roundOf16[key].winner.name !== ROUND_OF_16[key][1].name }">
+                  <td class="relative py-2 pl-3 text-center text-xl">
+                    <span v-if="roundOf16[key].winner.name === ROUND_OF_16_RESULTS[key].winner.name && roundOf16[key].winner.name === ROUND_OF_16[key][1].name" class="absolute top-0 left-0 bottom-0 w-1 bg-green-500"></span>
+                    <span v-if="roundOf16[key].winner.name !== ROUND_OF_16_RESULTS[key].winner.name && roundOf16[key].winner.name !== ROUND_OF_16[key][1].name" class="absolute top-0 left-0 bottom-0 w-1 bg-red-500"></span>
+                    {{ ROUND_OF_16[key][1].flag }}
+                  </td>
                   <td class="py-2 px-2 w-full" :class="{ 'font-semibold': ROUND_OF_16[key][1].name === roundOf16[key].winner.name, 'line-through text-slate-400': ROUND_OF_16[key][1].name !== ROUND_OF_16_RESULTS[key].winner.name && ROUND_OF_16_RESULTS[key].winner.name !== 'TBD' }">{{ ROUND_OF_16[key][1].name }}</td>
                   <td class="py-2 px-2 text-center text-sm w-12">{{ roundOf16[key].scores[[ROUND_OF_16[key][1].name]] }}</td>
                   <td class="py-2 px-2 text-center text-sm w-12">{{ ROUND_OF_16_RESULTS[key].scores[ROUND_OF_16[key][1].name] }}</td>
