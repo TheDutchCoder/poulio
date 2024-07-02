@@ -748,31 +748,31 @@ export const USER_ROUND_OF_8_PICKS = {
   'Reinier': {
     1: {
       scores: {
-        [COUNTRIES.ENG.name]: 1,
-        [COUNTRIES.SWI.name]: 0
+        [COUNTRIES.ENG.name]: 2,
+        [COUNTRIES.SWI.name]: 1
       },
       winner: COUNTRIES.ENG
     },
     2: {
       scores: {
-        [COUNTRIES.NED.name]: 0,
+        [COUNTRIES.NED.name]: 2,
         [COUNTRIES.TUR.name]: 0
       },
-      winner: COUNTRIES.TBD
+      winner: COUNTRIES.NED
     },
     3: {
       scores: {
-        [COUNTRIES.SPA.name]: 0,
-        [COUNTRIES.GER.name]: 0
+        [COUNTRIES.SPA.name]: 2,
+        [COUNTRIES.GER.name]: 3
       },
-      winner: COUNTRIES.TBD
+      winner: COUNTRIES.GER
     },
     4: {
       scores: {
         [COUNTRIES.POR.name]: 0,
-        [COUNTRIES.FRA.name]: 0
+        [COUNTRIES.FRA.name]: 1
       },
-      winner: COUNTRIES.TBD
+      winner: COUNTRIES.FRA
     }
   },
   'Tom': {
