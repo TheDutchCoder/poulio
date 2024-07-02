@@ -1,7 +1,7 @@
 <template>
   <div v-if="user" class="w-full flex flex-col gap-4 lg:gap-8">
     <!-- Round of 8 Picks -->
-    <!-- <CollapsibleArea>
+    <!-- <CollapsibleArea is-open>
       <template #header>
         <div class="flex">
           <h1 class="text-xl font-semibold lg:text-2xl">Round of 8 Picks for {{ user.name }}</h1>
@@ -23,12 +23,13 @@
                 </tr>
               </thead>
               <tbody class="divide-y border-t">
-                <tr :class="{ 'bg-green-50': ROUND_OF_8_RESULTS[key].winner.name === roundOf8[key].winner.name && ROUND_OF_8_RESULTS[key].winner.name !== 'TBD' }">
+                <tr :class="{ 'bg-green-50': isCountryGroupWinner(roundOf8[key], ROUND_OF_8_RESULTS[key]) && roundOf8[key].winner.name === ROUND_OF_8[key][0].name, 'bg-red-50': roundOf8[key].winner.name !== ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name !== ROUND_OF_8[key][0].name }">
                   <td class="relative py-2 pl-3 text-center text-xl">
-                    <span v-if="ROUND_OF_8_RESULTS[key].winner.name === roundOf8[key].winner.name && ROUND_OF_8_RESULTS[key].winner.name !== 'TBD'" class="absolute top-0 left-0 bottom-0 w-1 bg-green-500"></span>
+                    <span v-if="roundOf8[key].winner.name === ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name === ROUND_OF_8[key][0].name" class="absolute top-0 left-0 bottom-0 w-1 bg-green-500"></span>
+                    <span v-if="roundOf8[key].winner.name !== ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name !== ROUND_OF_8[key][0].name" class="absolute top-0 left-0 bottom-0 w-1 bg-red-500"></span>
                     {{ ROUND_OF_8[key][0].flag }}
                   </td>
-                  <td class="py-2 px-2 w-full" :class="{ 'font-semibold': ROUND_OF_8[key][0].name === roundOf8[key].winner.name }">{{ ROUND_OF_8[key][0].name }}</td>
+                  <td class="py-2 px-2 w-full" :class="{ 'font-semibold': ROUND_OF_8[key][0].name === roundOf8[key].winner.name, 'line-through text-slate-400': ROUND_OF_8[key][0].name !== ROUND_OF_8_RESULTS[key].winner.name && ROUND_OF_8_RESULTS[key].winner.name !== 'TBD' }">{{ ROUND_OF_8[key][0].name }}</td>
                   <td class="py-2 px-2 text-center text-sm w-12">{{ roundOf8[key].scores[ROUND_OF_8[key][0].name] }}</td>
                   <td class="py-2 px-2 text-center text-sm w-12">{{ ROUND_OF_8_RESULTS[key].scores[ROUND_OF_8[key][0].name] }}</td>
                   <td class="py-2 px-2 text-center text-sm w-12 border-l bg-white" rowspan="2">
@@ -36,8 +37,12 @@
                     <span v-else class="inline-flex justify-center items-center w-5 h-5 text-xs rounded-full bg-gray-200 text-slate-800 shadow-inner">0</span>
                   </td>
                 </tr>
-                <tr :class="{ 'bg-red-100': roundOf8[key].winner.name == ROUND_OF_8[key][1].name && ROUND_OF_8[key][1].name !== ROUND_OF_8_RESULTS[key].winner.name && ROUND_OF_8_RESULTS[key].winner.name !== 'TBD' }">
-                  <td class="relative py-2 pl-3 text-center text-xl">{{ ROUND_OF_8[key][1].flag }}</td>
+                <tr :class="{ 'bg-green-50': roundOf8[key].winner.name === ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name === ROUND_OF_8[key][1].name, 'bg-red-50': roundOf8[key].winner.name !== ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name !== ROUND_OF_8[key][1].name }">
+                  <td class="relative py-2 pl-3 text-center text-xl">
+                    <span v-if="roundOf8[key].winner.name === ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name === ROUND_OF_8[key][1].name" class="absolute top-0 left-0 bottom-0 w-1 bg-green-500"></span>
+                    <span v-if="roundOf8[key].winner.name !== ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name !== ROUND_OF_8[key][1].name" class="absolute top-0 left-0 bottom-0 w-1 bg-red-500"></span>
+                    {{ ROUND_OF_8[key][1].flag }}
+                  </td>
                   <td class="py-2 px-2 w-full" :class="{ 'font-semibold': ROUND_OF_8[key][1].name === roundOf8[key].winner.name, 'line-through text-slate-400': ROUND_OF_8[key][1].name !== ROUND_OF_8_RESULTS[key].winner.name && ROUND_OF_8_RESULTS[key].winner.name !== 'TBD' }">{{ ROUND_OF_8[key][1].name }}</td>
                   <td class="py-2 px-2 text-center text-sm w-12">{{ roundOf8[key].scores[[ROUND_OF_8[key][1].name]] }}</td>
                   <td class="py-2 px-2 text-center text-sm w-12">{{ ROUND_OF_8_RESULTS[key].scores[ROUND_OF_8[key][1].name] }}</td>
@@ -72,7 +77,7 @@
                 </tr>
               </thead>
               <tbody class="divide-y border-t">
-                <tr :class="{ 'bg-green-50': roundOf16[key].winner.name === ROUND_OF_16_RESULTS[key].winner.name && roundOf16[key].winner.name === ROUND_OF_16[key][0].name, 'bg-red-50': roundOf16[key].winner.name !== ROUND_OF_16_RESULTS[key].winner.name && roundOf16[key].winner.name !== ROUND_OF_16[key][0].name }">
+                <tr :class="{ 'bg-green-50': isCountryGroupWinner(roundOf16[key], ROUND_OF_16_RESULTS[key]) && roundOf16[key].winner.name === ROUND_OF_16[key][0].name, 'bg-red-50': roundOf16[key].winner.name !== ROUND_OF_16_RESULTS[key].winner.name && roundOf16[key].winner.name !== ROUND_OF_16[key][0].name }">
                   <td class="relative py-2 pl-3 text-center text-xl">
                     <span v-if="roundOf16[key].winner.name === ROUND_OF_16_RESULTS[key].winner.name && roundOf16[key].winner.name === ROUND_OF_16[key][0].name" class="absolute top-0 left-0 bottom-0 w-1 bg-green-500"></span>
                     <span v-if="roundOf16[key].winner.name !== ROUND_OF_16_RESULTS[key].winner.name && roundOf16[key].winner.name !== ROUND_OF_16[key][0].name" class="absolute top-0 left-0 bottom-0 w-1 bg-red-500"></span>
@@ -205,6 +210,8 @@ const user = useUser()
 const groupPicks = computed(() => USER_GROUP_PICKS[user.value.name])
 const totalPointsGroup = computed(() => calculateTotalPointsGroup(groupPicks.value, GROUP_STANDINGS, RANKING_POINTS_GROUP))
 const maxPointsGroup = computed(() => RANKING_POINTS_GROUP.reduce((acc, curr) => acc + curr, 0) * 6)
+
+// Round of 16
 const roundOf16 = computed(() => USER_ROUND_OF_16_PICKS[user.value.name])
 const maxRound16Points = computed(() => {
   return RANKING_POINTS_ROUND_OF_16.reduce((accumulator, currentValue) => accumulator + currentValue, 0) * 8
@@ -219,6 +226,7 @@ const userRound16Points = computed(() => {
   return score
 })
 
+// Round of 8
 const roundOf8 = computed(() => USER_ROUND_OF_8_PICKS[user.value.name])
 const maxRound8Points = computed(() => {
   return RANKING_POINTS_ROUND_OF_8.reduce((accumulator, currentValue) => accumulator + currentValue, 0) * 4
@@ -258,6 +266,11 @@ const groupStandings = computed(() => {
     const picks16 = USER_ROUND_OF_16_PICKS[user];
     for (const group in ROUND_OF_16_RESULTS) {
       totalPoints += getPlayoffPoints(picks16[group], ROUND_OF_16_RESULTS[group]);
+    }
+
+    const picks8 = USER_ROUND_OF_8_PICKS[user];
+    for (const group in ROUND_OF_8_RESULTS) {
+      totalPoints += getPlayoffPoints(picks8[group], ROUND_OF_8_RESULTS[group]);
     }
 
     standings.push({ user, totalPoints });
@@ -314,4 +327,19 @@ function getPointsForGroup(group, results) {
 
   return points
 }
+
+/**
+ * {
+      scores: {
+        [COUNTRIES.SWI.name]: 1,
+        [COUNTRIES.ITA.name]: 2
+      },
+      winner: COUNTRIES.ITA
+    },
+ */
+function isCountryGroupWinner(userPicks, results) {
+  return userPicks.winner.name === results.winner.name
+}
+
+function didUserPickCountryAsWinner(country, picks) {}
 </script>
