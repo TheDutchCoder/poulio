@@ -778,31 +778,31 @@ export const USER_ROUND_OF_8_PICKS = {
   'Tom': {
     1: {
       scores: {
-        [COUNTRIES.ENG.name]: 0,
+        [COUNTRIES.ENG.name]: 2,
         [COUNTRIES.SWI.name]: 0
       },
-      winner: COUNTRIES.TBD
+      winner: COUNTRIES.ENG
     },
     2: {
       scores: {
-        [COUNTRIES.NED.name]: 0,
-        [COUNTRIES.TUR.name]: 0
+        [COUNTRIES.NED.name]: 3,
+        [COUNTRIES.TUR.name]: 1
       },
-      winner: COUNTRIES.TBD
+      winner: COUNTRIES.NED
     },
     3: {
       scores: {
-        [COUNTRIES.SPA.name]: 0,
-        [COUNTRIES.GER.name]: 0
+        [COUNTRIES.SPA.name]: 2,
+        [COUNTRIES.GER.name]: 1
       },
-      winner: COUNTRIES.TBD
+      winner: COUNTRIES.SPA
     },
     4: {
       scores: {
-        [COUNTRIES.POR.name]: 0,
-        [COUNTRIES.FRA.name]: 0
+        [COUNTRIES.POR.name]: 1,
+        [COUNTRIES.FRA.name]: 2
       },
-      winner: COUNTRIES.TBD
+      winner: COUNTRIES.FRA
     }
   },
   'Wilco': {
@@ -839,30 +839,30 @@ export const USER_ROUND_OF_8_PICKS = {
     1: {
       scores: {
         [COUNTRIES.ENG.name]: 0,
-        [COUNTRIES.SWI.name]: 0
+        [COUNTRIES.SWI.name]: 2
       },
-      winner: COUNTRIES.TBD
+      winner: COUNTRIES.SWI
     },
     2: {
       scores: {
-        [COUNTRIES.NED.name]: 0,
-        [COUNTRIES.TUR.name]: 0
+        [COUNTRIES.NED.name]: 3,
+        [COUNTRIES.TUR.name]: 1
       },
-      winner: COUNTRIES.TBD
+      winner: COUNTRIES.NED
     },
     3: {
       scores: {
-        [COUNTRIES.SPA.name]: 0,
-        [COUNTRIES.GER.name]: 0
+        [COUNTRIES.SPA.name]: 4,
+        [COUNTRIES.GER.name]: 2
       },
-      winner: COUNTRIES.TBD
+      winner: COUNTRIES.SPA
     },
     4: {
       scores: {
         [COUNTRIES.POR.name]: 0,
-        [COUNTRIES.FRA.name]: 0
+        [COUNTRIES.FRA.name]: 2
       },
-      winner: COUNTRIES.TBD
+      winner: COUNTRIES.FRA
     }
   },
   'Nils': {
