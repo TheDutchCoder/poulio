@@ -930,29 +930,29 @@ export const USER_ROUND_OF_8_PICKS = {
 export const ROUND_OF_8_RESULTS = {
   1: {
     scores: {
-      [COUNTRIES.ENG.name]: 0,
-      [COUNTRIES.SWI.name]: 0
+      [COUNTRIES.ENG.name]: '-',
+      [COUNTRIES.SWI.name]: '-'
     },
     winner: COUNTRIES.TBD
   },
   2: {
     scores: {
-      [COUNTRIES.NED.name]: 0,
-      [COUNTRIES.TUR.name]: 0
+      [COUNTRIES.NED.name]: '-',
+      [COUNTRIES.TUR.name]: '-'
     },
     winner: COUNTRIES.TBD
   },
   3: {
     scores: {
-      [COUNTRIES.SPA.name]: 0,
-      [COUNTRIES.GER.name]: 0
+      [COUNTRIES.SPA.name]: '-',
+      [COUNTRIES.GER.name]: '-'
     },
     winner: COUNTRIES.TBD
   },
   4: {
     scores: {
-      [COUNTRIES.POR.name]: 0,
-      [COUNTRIES.FRA.name]: 0
+      [COUNTRIES.POR.name]: '-',
+      [COUNTRIES.FRA.name]: '-'
     },
     winner: COUNTRIES.TBD
   }

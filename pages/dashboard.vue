@@ -25,8 +25,8 @@
               <tbody class="divide-y border-t">
                 <tr :class="{ 'bg-green-50': isCountryGroupWinner(roundOf8[key], ROUND_OF_8_RESULTS[key]) && roundOf8[key].winner.name === ROUND_OF_8[key][0].name && ROUND_OF_8_RESULTS[key].winner.name !== 'TBD', 'bg-red-50': roundOf8[key].winner.name !== ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name !== ROUND_OF_8[key][0].name && ROUND_OF_8_RESULTS[key].winner.name !== 'TBD' }">
                   <td class="relative py-2 pl-3 text-center text-xl">
-                    <span v-if="roundOf8[key].winner.name === ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name === ROUND_OF_8[key][0].name" class="absolute top-0 left-0 bottom-0 w-1 bg-green-500"></span>
-                    <span v-if="roundOf8[key].winner.name !== ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name !== ROUND_OF_8[key][0].name" class="absolute top-0 left-0 bottom-0 w-1 bg-red-500"></span>
+                    <span v-if="roundOf8[key].winner.name === ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name === ROUND_OF_8[key][0].name && ROUND_OF_8_RESULTS[key].winner.name !== 'TBD'" class="absolute top-0 left-0 bottom-0 w-1 bg-green-500"></span>
+                    <span v-if="roundOf8[key].winner.name !== ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name !== ROUND_OF_8[key][0].name && ROUND_OF_8_RESULTS[key].winner.name !== 'TBD'" class="absolute top-0 left-0 bottom-0 w-1 bg-red-500"></span>
                     {{ ROUND_OF_8[key][0].flag }}
                   </td>
                   <td class="py-2 px-2 w-full" :class="{ 'font-semibold': ROUND_OF_8[key][0].name === roundOf8[key].winner.name, 'line-through text-slate-400': ROUND_OF_8[key][0].name !== ROUND_OF_8_RESULTS[key].winner.name && ROUND_OF_8_RESULTS[key].winner.name !== 'TBD' }">{{ ROUND_OF_8[key][0].name }}</td>
@@ -39,8 +39,8 @@
                 </tr>
                 <tr :class="{ 'bg-green-50': roundOf8[key].winner.name === ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name === ROUND_OF_8[key][1].name && ROUND_OF_8_RESULTS[key].winner.name !== 'TBD', 'bg-red-50': roundOf8[key].winner.name !== ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name !== ROUND_OF_8[key][1].name && ROUND_OF_8_RESULTS[key].winner.name !== 'TBD' }">
                   <td class="relative py-2 pl-3 text-center text-xl">
-                    <span v-if="roundOf8[key].winner.name === ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name === ROUND_OF_8[key][1].name" class="absolute top-0 left-0 bottom-0 w-1 bg-green-500"></span>
-                    <span v-if="roundOf8[key].winner.name !== ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name !== ROUND_OF_8[key][1].name" class="absolute top-0 left-0 bottom-0 w-1 bg-red-500"></span>
+                    <span v-if="roundOf8[key].winner.name === ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name === ROUND_OF_8[key][1].name && ROUND_OF_8_RESULTS[key].winner.name !== 'TBD'" class="absolute top-0 left-0 bottom-0 w-1 bg-green-500"></span>
+                    <span v-if="roundOf8[key].winner.name !== ROUND_OF_8_RESULTS[key].winner.name && roundOf8[key].winner.name !== ROUND_OF_8[key][1].name && ROUND_OF_8_RESULTS[key].winner.name !== 'TBD'" class="absolute top-0 left-0 bottom-0 w-1 bg-red-500"></span>
                     {{ ROUND_OF_8[key][1].flag }}
                   </td>
                   <td class="py-2 px-2 w-full" :class="{ 'font-semibold': ROUND_OF_8[key][1].name === roundOf8[key].winner.name, 'line-through text-slate-400': ROUND_OF_8[key][1].name !== ROUND_OF_8_RESULTS[key].winner.name && ROUND_OF_8_RESULTS[key].winner.name !== 'TBD' }">{{ ROUND_OF_8[key][1].name }}</td>
