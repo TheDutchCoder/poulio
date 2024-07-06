@@ -944,16 +944,16 @@ export const ROUND_OF_8_RESULTS = {
   },
   3: {
     scores: {
-      [COUNTRIES.SPA.name]: '-',
-      [COUNTRIES.GER.name]: '-'
+      [COUNTRIES.SPA.name]: 1,
+      [COUNTRIES.GER.name]: 1
     },
-    winner: COUNTRIES.TBD
+    winner: COUNTRIES.SPA
   },
   4: {
     scores: {
-      [COUNTRIES.POR.name]: '-',
-      [COUNTRIES.FRA.name]: '-'
+      [COUNTRIES.POR.name]: 0,
+      [COUNTRIES.FRA.name]: 0
     },
-    winner: COUNTRIES.TBD
+    winner: COUNTRIES.FRA
   }
 }
