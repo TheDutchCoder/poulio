@@ -1,7 +1,61 @@
 <template>
   <div v-if="user" class="w-full flex flex-col gap-4 lg:gap-8">
-    <!-- Round of 8 Picks -->
+    <!-- Round of 4 Picks -->
     <CollapsibleArea is-open>
+      <template #header>
+        <div class="flex">
+          <h1 class="text-xl font-semibold lg:text-2xl">Round of 4 Picks for {{ user.name }}</h1>
+        </div>
+        <ul>
+          <li><span class="text-slate-500">({{ userRound4Points }} out of {{ maxRound4Points }} points)</span></li>
+        </ul>
+      </template>
+      <template #content>
+        <div class="grid cols-1 gap-6 mt-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div v-for="(group, key) in ROUND_OF_4" :key="key" class="border rounded-lg overflow-hidden">
+            <table class="w-full">
+              <thead class="text-left bg-gray-50">
+                <tr>
+                  <th colspan="2" class="py-2 px-2 w-8 text-lg font-semibold">Group {{ key }}</th>
+                  <th class="py-2 px-2 text-right font-semibold">Pred</th>
+                  <th class="py-2 px-2 text-right font-semibold">Res</th>
+                  <th class="py-2 px-2 text-right font-semibold">Pts</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y border-t">
+                <tr :class="{ 'bg-green-50': isCountryGroupWinner(roundOf4[key], ROUND_OF_4_RESULTS[key]) && roundOf4[key].winner.name === ROUND_OF_4[key][0].name && ROUND_OF_4_RESULTS[key].winner.name !== 'TBD', 'bg-red-50': roundOf4[key].winner.name !== ROUND_OF_4_RESULTS[key].winner.name && roundOf4[key].winner.name !== ROUND_OF_4[key][0].name && ROUND_OF_4_RESULTS[key].winner.name !== 'TBD' }">
+                  <td class="relative py-2 pl-3 text-center text-xl">
+                    <span v-if="roundOf4[key].winner.name === ROUND_OF_4_RESULTS[key].winner.name && roundOf4[key].winner.name === ROUND_OF_4[key][0].name && ROUND_OF_4_RESULTS[key].winner.name !== 'TBD'" class="absolute top-0 left-0 bottom-0 w-1 bg-green-500"></span>
+                    <span v-if="roundOf4[key].winner.name !== ROUND_OF_4_RESULTS[key].winner.name && roundOf4[key].winner.name !== ROUND_OF_4[key][0].name && ROUND_OF_4_RESULTS[key].winner.name !== 'TBD'" class="absolute top-0 left-0 bottom-0 w-1 bg-red-500"></span>
+                    {{ ROUND_OF_4[key][0].flag }}
+                  </td>
+                  <td class="py-2 px-2 w-full" :class="{ 'font-semibold': ROUND_OF_4[key][0].name === roundOf4[key].winner.name, 'line-through text-slate-400': ROUND_OF_4[key][0].name !== ROUND_OF_4_RESULTS[key].winner.name && ROUND_OF_4_RESULTS[key].winner.name !== 'TBD' }">{{ ROUND_OF_4[key][0].name }}</td>
+                  <td class="py-2 px-2 text-center text-sm w-12">{{ roundOf4[key].scores[ROUND_OF_4[key][0].name] }}</td>
+                  <td class="py-2 px-2 text-center text-sm w-12">{{ ROUND_OF_4_RESULTS[key].scores[ROUND_OF_4[key][0].name] }}</td>
+                  <td class="py-2 px-2 text-center text-sm w-12 border-l bg-white" rowspan="2">
+                    <span v-if="getPointsForGroup(roundOf4[key], ROUND_OF_4_RESULTS[key]) > 0" class="inline-flex justify-center items-center w-5 h-5 text-xs rounded-full bg-green-200 text-green-800">{{ getPointsForGroup(roundOf4[key], ROUND_OF_4_RESULTS[key]) }}</span>
+                    <span v-else class="inline-flex justify-center items-center w-5 h-5 text-xs rounded-full bg-gray-200 text-slate-800 shadow-inner">0</span>
+                  </td>
+                </tr>
+                <tr :class="{ 'bg-green-50': roundOf4[key].winner.name === ROUND_OF_4_RESULTS[key].winner.name && roundOf4[key].winner.name === ROUND_OF_4[key][1].name && ROUND_OF_4_RESULTS[key].winner.name !== 'TBD', 'bg-red-50': roundOf4[key].winner.name !== ROUND_OF_4_RESULTS[key].winner.name && roundOf4[key].winner.name !== ROUND_OF_4[key][1].name && ROUND_OF_4_RESULTS[key].winner.name !== 'TBD' }">
+                  <td class="relative py-2 pl-3 text-center text-xl">
+                    <span v-if="roundOf4[key].winner.name === ROUND_OF_4_RESULTS[key].winner.name && roundOf4[key].winner.name === ROUND_OF_4[key][1].name && ROUND_OF_4_RESULTS[key].winner.name !== 'TBD'" class="absolute top-0 left-0 bottom-0 w-1 bg-green-500"></span>
+                    <span v-if="roundOf4[key].winner.name !== ROUND_OF_4_RESULTS[key].winner.name && roundOf4[key].winner.name !== ROUND_OF_4[key][1].name && ROUND_OF_4_RESULTS[key].winner.name !== 'TBD'" class="absolute top-0 left-0 bottom-0 w-1 bg-red-500"></span>
+                    {{ ROUND_OF_4[key][1].flag }}
+                  </td>
+                  <td class="py-2 px-2 w-full" :class="{ 'font-semibold': ROUND_OF_4[key][1].name === roundOf4[key].winner.name, 'line-through text-slate-400': ROUND_OF_4[key][1].name !== ROUND_OF_4_RESULTS[key].winner.name && ROUND_OF_4_RESULTS[key].winner.name !== 'TBD' }">{{ ROUND_OF_4[key][1].name }}</td>
+                  <td class="py-2 px-2 text-center text-sm w-12">{{ roundOf4[key].scores[[ROUND_OF_4[key][1].name]] }}</td>
+                  <td class="py-2 px-2 text-center text-sm w-12">{{ ROUND_OF_4_RESULTS[key].scores[ROUND_OF_4[key][1].name] }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </template>
+    </CollapsibleArea>
+
+    <!-- Round of 8 Picks -->
+    <CollapsibleArea>
       <template #header>
         <div class="flex">
           <h1 class="text-xl font-semibold lg:text-2xl">Round of 8 Picks for {{ user.name }}</h1>
@@ -189,7 +243,11 @@ import {
   RANKING_POINTS_ROUND_OF_8,
   ROUND_OF_8_RESULTS,
   ROUND_OF_8,
-  USER_ROUND_OF_8_PICKS
+  USER_ROUND_OF_8_PICKS,
+  RANKING_POINTS_ROUND_OF_4,
+  ROUND_OF_4_RESULTS,
+  ROUND_OF_4,
+  USER_ROUND_OF_4_PICKS
 } from '~/constants'
 
 definePageMeta({
@@ -236,6 +294,21 @@ const userRound8Points = computed(() => {
 
   for (const group in roundOf8.value) {
     score += getPlayoffPoints(roundOf8.value[group], ROUND_OF_8_RESULTS[group])
+  }
+
+  return score
+})
+
+// Round of 4
+const roundOf4 = computed(() => USER_ROUND_OF_4_PICKS[user.value.name])
+const maxRound4Points = computed(() => {
+  return RANKING_POINTS_ROUND_OF_4.reduce((accumulator, currentValue) => accumulator + currentValue, 0) * 4
+})
+const userRound4Points = computed(() => {
+  let score = 0
+
+  for (const group in roundOf4.value) {
+    score += getPlayoffPoints(roundOf8.value[group], ROUND_OF_4_RESULTS[group])
   }
 
   return score
