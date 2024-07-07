@@ -984,17 +984,17 @@ export const USER_ROUND_OF_4_PICKS = {
   'Tom': {
     1: {
       scores: {
-        [COUNTRIES.SPA.name]: 0,
-        [COUNTRIES.FRA.name]: 0
+        [COUNTRIES.SPA.name]: 2,
+        [COUNTRIES.FRA.name]: 1
       },
-      winner: COUNTRIES.TBD
+      winner: COUNTRIES.SPA
     },
     2: {
       scores: {
-        [COUNTRIES.NED.name]: 0,
-        [COUNTRIES.ENG.name]: 0
+        [COUNTRIES.NED.name]: 2,
+        [COUNTRIES.ENG.name]: 1
       },
-      winner: COUNTRIES.TBD
+      winner: COUNTRIES.NED
     }
   },
   'Wilco': {
