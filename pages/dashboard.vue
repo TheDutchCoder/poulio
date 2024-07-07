@@ -346,6 +346,11 @@ const groupStandings = computed(() => {
       totalPoints += getPlayoffPoints(picks8[group], ROUND_OF_8_RESULTS[group]);
     }
 
+    const picks4 = USER_ROUND_OF_4_PICKS[user];
+    for (const group in ROUND_OF_4_RESULTS) {
+      totalPoints += getPlayoffPoints(picks4[group], ROUND_OF_4_RESULTS[group]);
+    }
+
     standings.push({ user, totalPoints });
   }  
 
