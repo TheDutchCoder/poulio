@@ -1066,10 +1066,10 @@ export const USER_ROUND_OF_4_PICKS = {
 export const ROUND_OF_4_RESULTS = {
   1: {
     scores: {
-      [COUNTRIES.SPA.name]: '-',
-      [COUNTRIES.FRA.name]: '-'
+      [COUNTRIES.SPA.name]: 2,
+      [COUNTRIES.FRA.name]: 1
     },
-    winner: COUNTRIES.TBD
+    winner: COUNTRIES.SPA
   },
   2: {
     scores: {
