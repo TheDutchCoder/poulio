@@ -2,6 +2,7 @@ export const RANKING_POINTS_GROUP = [2, 2, 1, 1]
 export const RANKING_POINTS_ROUND_OF_16 = [4, 2]
 export const RANKING_POINTS_ROUND_OF_8 = [4, 2]
 export const RANKING_POINTS_ROUND_OF_4 = [4, 2]
+export const RANKING_POINTS_ROUND_OF_2 = [4, 2]
 
 export const COUNTRIES = {
   GER: {
@@ -1073,7 +1074,78 @@ export const ROUND_OF_4_RESULTS = {
   },
   2: {
     scores: {
-      [COUNTRIES.NED.name]: '-',
+      [COUNTRIES.NED.name]: 1,
+      [COUNTRIES.ENG.name]: 2
+    },
+    winner: COUNTRIES.ENG
+  }
+}
+
+export const ROUND_OF_2 = {
+  1: [COUNTRIES.SPA, COUNTRIES.ENG],
+}
+
+export const USER_ROUND_OF_2_PICKS = {
+  'Reinier': {
+    1: {
+      scores: {
+        [COUNTRIES.SPA.name]: '-',
+        [COUNTRIES.ENG.name]: '-'
+      },
+      winner: COUNTRIES.TBD
+    }
+  },
+  'Tom': {
+    1: {
+      scores: {
+        [COUNTRIES.SPA.name]: '-',
+        [COUNTRIES.ENG.name]: '-'
+      },
+      winner: COUNTRIES.TBD
+    }
+  },
+  'Wilco': {
+    1: {
+      scores: {
+        [COUNTRIES.SPA.name]: '-',
+        [COUNTRIES.ENG.name]: '-'
+      },
+      winner: COUNTRIES.TBD
+    }
+  },
+  'Peter': {
+    1: {
+      scores: {
+        [COUNTRIES.SPA.name]: '-',
+        [COUNTRIES.ENG.name]: '-'
+      },
+      winner: COUNTRIES.TBD
+    }
+  },
+  'Nils': {
+    1: {
+      scores: {
+        [COUNTRIES.SPA.name]: '-',
+        [COUNTRIES.ENG.name]: '-'
+      },
+      winner: COUNTRIES.TBD
+    }
+  },
+  'Michael': {
+    1: {
+      scores: {
+        [COUNTRIES.SPA.name]: '-',
+        [COUNTRIES.ENG.name]: '-'
+      },
+      winner: COUNTRIES.TBD
+    }
+  },
+}
+
+export const ROUND_OF_2_RESULTS = {
+  1: {
+    scores: {
+      [COUNTRIES.SPA.name]: '-',
       [COUNTRIES.ENG.name]: '-'
     },
     winner: COUNTRIES.TBD

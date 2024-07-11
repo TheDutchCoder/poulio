@@ -1,7 +1,61 @@
 <template>
   <div v-if="user" class="w-full flex flex-col gap-4 lg:gap-8">
-    <!-- Round of 4 Picks -->
+    <!-- Round of 2 Picks -->
     <CollapsibleArea is-open>
+      <template #header>
+        <div class="flex">
+          <h1 class="text-xl font-semibold lg:text-2xl">Finals Picks for {{ user.name }}</h1>
+        </div>
+        <ul>
+          <li><span class="text-slate-500">({{ userRound2Points }} out of {{ maxRound2Points }} points)</span></li>
+        </ul>
+      </template>
+      <template #content>
+        <div class="grid cols-1 gap-6 mt-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div v-for="(group, key) in ROUND_OF_2" :key="key" class="border rounded-lg overflow-hidden">
+            <table class="w-full">
+              <thead class="text-left bg-gray-50">
+                <tr>
+                  <th colspan="2" class="py-2 px-2 w-8 text-lg font-semibold">Group {{ key }}</th>
+                  <th class="py-2 px-2 text-right font-semibold">Pred</th>
+                  <th class="py-2 px-2 text-right font-semibold">Res</th>
+                  <th class="py-2 px-2 text-right font-semibold">Pts</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y border-t">
+                <tr :class="{ 'bg-green-50': isCountryGroupWinner(roundOf2[key], ROUND_OF_2_RESULTS[key]) && roundOf2[key].winner.name === ROUND_OF_2[key][0].name && ROUND_OF_2_RESULTS[key].winner.name !== 'TBD', 'bg-red-50': roundOf2[key].winner.name !== ROUND_OF_2_RESULTS[key].winner.name && roundOf2[key].winner.name !== ROUND_OF_2[key][0].name && ROUND_OF_2_RESULTS[key].winner.name !== 'TBD' }">
+                  <td class="relative py-2 pl-3 text-center text-xl">
+                    <span v-if="roundOf2[key].winner.name === ROUND_OF_2_RESULTS[key].winner.name && roundOf2[key].winner.name === ROUND_OF_2[key][0].name && ROUND_OF_2_RESULTS[key].winner.name !== 'TBD'" class="absolute top-0 left-0 bottom-0 w-1 bg-green-500"></span>
+                    <span v-if="roundOf2[key].winner.name !== ROUND_OF_2_RESULTS[key].winner.name && roundOf2[key].winner.name !== ROUND_OF_2[key][0].name && ROUND_OF_2_RESULTS[key].winner.name !== 'TBD'" class="absolute top-0 left-0 bottom-0 w-1 bg-red-500"></span>
+                    {{ ROUND_OF_2[key][0].flag }}
+                  </td>
+                  <td class="py-2 px-2 w-full" :class="{ 'font-semibold': ROUND_OF_2[key][0].name === roundOf2[key].winner.name, 'line-through text-slate-400': ROUND_OF_2[key][0].name !== ROUND_OF_2_RESULTS[key].winner.name && ROUND_OF_2_RESULTS[key].winner.name !== 'TBD' }">{{ ROUND_OF_2[key][0].name }}</td>
+                  <td class="py-2 px-2 text-center text-sm w-12">{{ roundOf2[key].scores[ROUND_OF_2[key][0].name] }}</td>
+                  <td class="py-2 px-2 text-center text-sm w-12">{{ ROUND_OF_2_RESULTS[key].scores[ROUND_OF_2[key][0].name] }}</td>
+                  <td class="py-2 px-2 text-center text-sm w-12 border-l bg-white" rowspan="2">
+                    <span v-if="getPointsForGroup(roundOf2[key], ROUND_OF_2_RESULTS[key]) > 0" class="inline-flex justify-center items-center w-5 h-5 text-xs rounded-full bg-green-200 text-green-800">{{ getPointsForGroup(roundOf2[key], ROUND_OF_2_RESULTS[key]) }}</span>
+                    <span v-else class="inline-flex justify-center items-center w-5 h-5 text-xs rounded-full bg-gray-200 text-slate-800 shadow-inner">0</span>
+                  </td>
+                </tr>
+                <tr :class="{ 'bg-green-50': roundOf2[key].winner.name === ROUND_OF_2_RESULTS[key].winner.name && roundOf2[key].winner.name === ROUND_OF_2[key][1].name && ROUND_OF_2_RESULTS[key].winner.name !== 'TBD', 'bg-red-50': roundOf2[key].winner.name !== ROUND_OF_2_RESULTS[key].winner.name && roundOf2[key].winner.name !== ROUND_OF_2[key][1].name && ROUND_OF_2_RESULTS[key].winner.name !== 'TBD' }">
+                  <td class="relative py-2 pl-3 text-center text-xl">
+                    <span v-if="roundOf2[key].winner.name === ROUND_OF_2_RESULTS[key].winner.name && roundOf2[key].winner.name === ROUND_OF_2[key][1].name && ROUND_OF_2_RESULTS[key].winner.name !== 'TBD'" class="absolute top-0 left-0 bottom-0 w-1 bg-green-500"></span>
+                    <span v-if="roundOf2[key].winner.name !== ROUND_OF_2_RESULTS[key].winner.name && roundOf2[key].winner.name !== ROUND_OF_2[key][1].name && ROUND_OF_2_RESULTS[key].winner.name !== 'TBD'" class="absolute top-0 left-0 bottom-0 w-1 bg-red-500"></span>
+                    {{ ROUND_OF_2[key][1].flag }}
+                  </td>
+                  <td class="py-2 px-2 w-full" :class="{ 'font-semibold': ROUND_OF_2[key][1].name === roundOf2[key].winner.name, 'line-through text-slate-400': ROUND_OF_2[key][1].name !== ROUND_OF_2_RESULTS[key].winner.name && ROUND_OF_2_RESULTS[key].winner.name !== 'TBD' }">{{ ROUND_OF_2[key][1].name }}</td>
+                  <td class="py-2 px-2 text-center text-sm w-12">{{ roundOf2[key].scores[[ROUND_OF_2[key][1].name]] }}</td>
+                  <td class="py-2 px-2 text-center text-sm w-12">{{ ROUND_OF_2_RESULTS[key].scores[ROUND_OF_2[key][1].name] }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </template>
+    </CollapsibleArea>
+
+    <!-- Round of 4 Picks -->
+    <CollapsibleArea>
       <template #header>
         <div class="flex">
           <h1 class="text-xl font-semibold lg:text-2xl">Round of 4 Picks for {{ user.name }}</h1>
@@ -247,7 +301,11 @@ import {
   RANKING_POINTS_ROUND_OF_4,
   ROUND_OF_4_RESULTS,
   ROUND_OF_4,
-  USER_ROUND_OF_4_PICKS
+  USER_ROUND_OF_4_PICKS,
+  RANKING_POINTS_ROUND_OF_2,
+  ROUND_OF_2_RESULTS,
+  ROUND_OF_2,
+  USER_ROUND_OF_2_PICKS
 } from '~/constants'
 
 definePageMeta({
@@ -302,13 +360,28 @@ const userRound8Points = computed(() => {
 // Round of 4
 const roundOf4 = computed(() => USER_ROUND_OF_4_PICKS[user.value.name])
 const maxRound4Points = computed(() => {
-  return RANKING_POINTS_ROUND_OF_4.reduce((accumulator, currentValue) => accumulator + currentValue, 0) * 4
+  return RANKING_POINTS_ROUND_OF_4.reduce((accumulator, currentValue) => accumulator + currentValue, 0) * 2
 })
 const userRound4Points = computed(() => {
   let score = 0
 
   for (const group in roundOf4.value) {
-    score += getPlayoffPoints(roundOf8.value[group], ROUND_OF_4_RESULTS[group])
+    score += getPlayoffPoints(roundOf4.value[group], ROUND_OF_4_RESULTS[group])
+  }
+
+  return score
+})
+
+// Round of 2
+const roundOf2 = computed(() => USER_ROUND_OF_2_PICKS[user.value.name])
+const maxRound2Points = computed(() => {
+  return RANKING_POINTS_ROUND_OF_2.reduce((accumulator, currentValue) => accumulator + currentValue, 0) * 1
+})
+const userRound2Points = computed(() => {
+  let score = 0
+
+  for (const group in roundOf2.value) {
+    score += getPlayoffPoints(roundOf2.value[group], ROUND_OF_2_RESULTS[group])
   }
 
   return score
@@ -349,6 +422,11 @@ const groupStandings = computed(() => {
     const picks4 = USER_ROUND_OF_4_PICKS[user];
     for (const group in ROUND_OF_4_RESULTS) {
       totalPoints += getPlayoffPoints(picks4[group], ROUND_OF_4_RESULTS[group]);
+    }
+
+    const picks2 = USER_ROUND_OF_2_PICKS[user];
+    for (const group in ROUND_OF_2_RESULTS) {
+      totalPoints += getPlayoffPoints(picks2[group], ROUND_OF_2_RESULTS[group]);
     }
 
     standings.push({ user, totalPoints });
