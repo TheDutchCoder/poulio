@@ -1098,10 +1098,10 @@ export const USER_ROUND_OF_2_PICKS = {
   'Tom': {
     1: {
       scores: {
-        [COUNTRIES.SPA.name]: '-',
-        [COUNTRIES.ENG.name]: '-'
+        [COUNTRIES.SPA.name]: 2,
+        [COUNTRIES.ENG.name]: 1
       },
-      winner: COUNTRIES.TBD
+      winner: COUNTRIES.SPA
     }
   },
   'Wilco': {
@@ -1145,9 +1145,9 @@ export const USER_ROUND_OF_2_PICKS = {
 export const ROUND_OF_2_RESULTS = {
   1: {
     scores: {
-      [COUNTRIES.SPA.name]: '-',
-      [COUNTRIES.ENG.name]: '-'
+      [COUNTRIES.SPA.name]: 2,
+      [COUNTRIES.ENG.name]: 1
     },
-    winner: COUNTRIES.TBD
+    winner: COUNTRIES.SPA
   }
 }
