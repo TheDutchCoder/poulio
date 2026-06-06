@@ -14,6 +14,8 @@
       <button type="submit" class="rounded p-2 bg-indigo-600 text-white font-semibold mt-4 transition-colors hover:bg-indigo-800 focus:bg-indigo-800">Log in</button>
     </div>
   </form>
+
+  <button @click="generatePW">Gen</button>
 </template>
 
 <script setup>
@@ -44,6 +46,17 @@ const error = ref(false)
 const users = useUsers()
 const user = useUser()
 user.value = undefined
+
+// console.log(await generateSHA1('WilcoD2026'))
+// console.log(await generateSHA1('TomD2026'))
+// console.log(await generateSHA1('MichaelN2026'))
+// console.log(await generateSHA1('NilsD2026'))
+
+async function generatePW() {
+  const a = await generateSHA1('PeterJ2026')
+
+  console.log(a)
+}
 
 async function login() {
   const shaEmail = await generateSHA1(email.value)
