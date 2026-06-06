@@ -1,5 +1,40 @@
 <template>
   <div v-if="user" class="w-full flex flex-col gap-4 lg:gap-8">
+
+    <div class="flex gap-4 items-center mx-auto">
+      <button @click="prev" :disabled="isPrevDisabled" :class="{ 'opacity-25 cursor-not-allowed': isPrevDisabled }">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        </svg>
+      </button>
+
+      <h1 class="font-semibold text-4xl">Group {{ 'ABCDEFGHIJKL'.charAt(currentGroup) }}</h1>
+
+      <button @click="next" :disabled="isNextDisabled" :class="{ 'opacity-25 cursor-not-allowed': isNextDisabled }">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+        </svg>
+      </button>
+    </div>
+
+    <draggable 
+      v-model="groups[currentGroup]" 
+      group="people" 
+      @start="drag=true" 
+      @end="drag=false" 
+      ghost-class="bg-gray-50"
+      item-key="id"
+      class="bg-white rounded-lg shadow-lg overflow-hidden divide-y border text-lg"
+    >
+      <template #item="{element, index}">
+        <div class="cursor-move flex gap-2 items-center px-3 py-2">
+          <div class="text-sm">{{index + 1}}</div>
+          <div>{{element.flag}}</div>
+          <div>{{element.name}}</div>
+        </div>
+      </template>
+    </draggable>
+
     <!-- Round of 2 Picks -->
     <!-- <CollapsibleArea is-open>
       <template #header>
@@ -301,6 +336,8 @@
 </template>
 
 <script setup>
+import draggable from 'vuedraggable'
+
 import {
   USER_GROUP_PICKS,
   GROUP_STANDINGS,
@@ -321,7 +358,65 @@ import {
   // ROUND_OF_2_RESULTS,
   // ROUND_OF_2,
   // USER_ROUND_OF_2_PICKS
+  COUNTRIES
 } from '~/constants'
+
+const groupLetters = 'ABCDEFGHIJKL'
+const currentGroup = ref(0)
+const isPrevDisabled = computed(() => currentGroup.value === 0)
+const isNextDisabled = computed(() => currentGroup.value === (groupLetters.length - 1))
+
+function prev() {
+  currentGroup.value--
+
+  if (currentGroup.value < 0) {
+    currentGroup.value = 0
+  }
+}
+
+function next() {
+  currentGroup.value++
+
+  if (currentGroup.value > (groupLetters.length - 1)) {
+    currentGroup.value = groupLetters.length - 1
+  }
+}
+
+const groupA = ref([COUNTRIES.MEX, COUNTRIES.CZE, COUNTRIES.KOR, COUNTRIES.RSA])
+const groupB = ref([COUNTRIES.CAN, COUNTRIES.SUI, COUNTRIES.BIH, COUNTRIES.QAT])
+const groupC = ref([COUNTRIES.BRA, COUNTRIES.MAR, COUNTRIES.SCO, COUNTRIES.HAI])
+const groupD = ref([COUNTRIES.USA, COUNTRIES.PAR, COUNTRIES.AUS, COUNTRIES.TUR])
+const groupE = ref([COUNTRIES.GER, COUNTRIES.ECU, COUNTRIES.CIV, COUNTRIES.CUW])
+const groupF = ref([COUNTRIES.NED, COUNTRIES.SWE, COUNTRIES.JPN, COUNTRIES.TUN])
+const groupG = ref([COUNTRIES.BEL, COUNTRIES.EGY, COUNTRIES.NZL, COUNTRIES.IRN])
+const groupH = ref([COUNTRIES.ESP, COUNTRIES.URU, COUNTRIES.KSA, COUNTRIES.CPV])
+const groupI = ref([COUNTRIES.FRA, COUNTRIES.NOR, COUNTRIES.SEN, COUNTRIES.IRQ])
+const groupJ = ref([COUNTRIES.ARG, COUNTRIES.AUT, COUNTRIES.ALG, COUNTRIES.JOR])
+const groupK = ref([COUNTRIES.POR, COUNTRIES.COL, COUNTRIES.COD, COUNTRIES.UZB])
+const groupL = ref([COUNTRIES.ENG, COUNTRIES.CRO, COUNTRIES.GHA, COUNTRIES.PAN])
+
+const groups = ref([
+  groupA.value,
+  groupB.value,
+  groupC.value,
+  groupD.value,
+  groupE.value,
+  groupF.value,
+  groupG.value,
+  groupH.value,
+  groupI.value,
+  groupJ.value,
+  groupK.value,
+  groupL.value,
+])
+
+const myArray = ref([{
+  name: COUNTRIES.ALG.name,
+  flag: COUNTRIES.ALG.flag,
+}, {
+  name: COUNTRIES.ARG.name,
+  flag: COUNTRIES.ARG.flag,
+}])
 
 definePageMeta({
   middleware: [

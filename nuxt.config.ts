@@ -15,5 +15,11 @@ export default defineNuxtConfig({
       tailwindcss: {},
       autoprefixer: {},
     },
+  },
+
+  runtimeConfig: {
+    public: {
+      predApiBase: process.env.NUXT_PUBLIC_PRED_API_BASE,
+    }
   }
 })
