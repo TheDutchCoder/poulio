@@ -12,27 +12,27 @@ export const useUsers = () => useState<User[]>('users', () => ([
   },
   {
     email: '448e5fc09a5d766e13bd3756186e803b2265f43c',
-    password: 'a2fc8b82393f480525ca54dae2a1f486f593d15b',
+    password: 'c7bf7a4f0c3679e5e3556070f02bc87cf27fef5c',
     name: 'Tom'
   },
   {
     email: '31a5c9a94c51751ed768ea65c04bccaf7617721a',
-    password: '275c00a3429dcc76aa73bbec319de126bb15fee0',
+    password: 'e7412c19e198df7a0559d261b4bfceb67ac55d43',
     name: 'Wilco'
   },
   {
     email: '2859fb2319ec97c001da8c53e5dd10bc21327e6b',
-    password: '3e3a1c3f38fe9123473b7fb3ee098ed8e1d7f948',
+    password: '6350f9fe1e3874346c69f63ee71fcc4467a2d051',
     name: 'Peter'
   },
   {
     email: 'bd61114e08bd01fbd2ad9b07906bd557d67184b1',
-    password: '1b4f2b56251e513a53ce6e905e824a90521fbdbf',
+    password: '279188e57d6947822435e0008fe52f31f3b610fc',
     name: 'Nils'
   },
   {
     email: '0c160a1e657a6e6ab1658bb9f9e3425d24edb34f',
-    password: '774e7f6b488b02111c39012481f4a604bcff7245',
+    password: '4dd901796574c0976e44c6244a058ffe4fc293ee',
     name: 'Michael'
   }
 ]))
