@@ -234,7 +234,7 @@
                 <tr>
                   <th colspan="2" class="py-2 px-2 text-lg font-semibold">Group {{ key }}</th>
                   <th class="py-2 px-2 text-right font-semibold">Pts</th>
-                  <th colspan="3" class="border-l py-2 px-2 text-left text-slate-600 font-normal">Picks</th>
+                  <th colspan="3" class="border-l py-2 px-2 text-left text-slate-600 font-normal">Standings</th>
                 </tr>
               </thead>
               <tbody class="divide-y border-t">
