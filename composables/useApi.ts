@@ -1,4 +1,4 @@
-export function usePredApi() {
+export function useApi() {
   const $config = useRuntimeConfig()
 
   const baseURL = $config.public.predApiBase
@@ -15,5 +15,21 @@ export function usePredApi() {
 
   const list = () => $fetch(`/p`, { baseURL })
 
-  return { save, load, list }
+  const upsertUser = (id: string, username: string, email?: string) =>
+    $fetch(`/u/${encodeURIComponent(id)}`, {
+      baseURL,
+      method: "PUT",
+      body: { username, email },
+    });
+
+  const listUsers = () => $fetch(`/u`, { baseURL });
+
+  return {
+    save,
+    load,
+    list,
+
+    upsertUser,
+    listUsers,
+  }
 }

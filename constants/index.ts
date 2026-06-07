@@ -1,3 +1,10 @@
+export const users = [
+  {
+    name: 'reinier',
+    email: 'rp.kaper@gmail.com'
+  }
+]
+
 export const RANKING_POINTS_GROUP = [2, 2, 1, 1]
 export const RANKING_POINTS_ROUND_OF_16 = [4, 2]
 export const RANKING_POINTS_ROUND_OF_8 = [4, 2]
@@ -6,198 +13,247 @@ export const RANKING_POINTS_ROUND_OF_2 = [4, 2]
 
 export const COUNTRIES = {
   MEX: {
+    key: 'MEX',
     flag: '🇲🇽',
     name: 'Mexico'
   },
   RSA: {
+    key: 'RSA',
     flag: '🇿🇦',
     name: 'South Africa'
   },
   KOR: {
+    key: 'KOR',
     flag: '🇰🇷',
     name: 'Korea Republic'
   },
   SCO: {
+    key: 'SCO',
     flag: '🏴',
     name: 'Scotland'
   },
   CRO: {
+    key: 'CRO',
     flag: '🇭🇷',
     name: 'Croatia'
   },
   ENG: {
+    key: 'ENG',
     flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
     name: 'England'
   },
   FRA: {
+    key: 'FRA',
     flag: '🇫🇷',
     name: 'France'
   },
   NED: {
+    key: 'NED',
     flag: '🇳🇱',
     name: 'Netherlands'
   },
   AUS: {
+    key: 'AUS',
     flag: '🇦🇺',
     name: 'Australia'
   },
   BEL: {
+    key: 'BEL',
     flag: '🇧🇪',
     name: 'Belgium'
   },
   POR: {
+    key: 'POR',
     flag: '🇵🇹',
     name: 'Portugal'
   },
   TUR: {
+    key: 'TUR',
     flag: '🇹🇷',
     name: 'Türkiye'
   },
   CZE: {
+    key: 'CZE',
     flag: '🇨🇿',
     name: 'Czechia'
   },
   CAN: {
+    key: 'CAN',
     flag: '🇨🇦',
     name: 'Canada'
   },
   BIH: {
+    key: 'BIH',
     flag: '🇧🇦',
     name: 'Bosnia and Herzegovina'
   },
   QAT: {
+    key: 'QAT',
     flag: '🇶🇦',
     name: 'Qatar'
   },
   SUI: {
+    key: 'SUI',
     flag: '🇨🇭',
     name: 'Switzerland'
   },
   BRA: {
+    key: 'BRA',
     flag: '🇧🇷',
     name: 'Brazil'
   },
   MAR: {
+    key: 'MAR',
     flag: '🇲🇦',
     name: 'Morocco'
   },
   HAI: {
+    key: 'HAI',
     flag: '🇭🇹',
     name: 'Haiti'
   },
   USA: {
+    key: 'USA',
     flag: '🇺🇸',
     name: 'USA'
   },
   PAR: {
+    key: 'PAR',
     flag: '🇵🇾',
     name: 'Paraguay'
   },
   GER: {
+    key: 'GER',
     flag: '🇩🇪',
     name: 'Germany'
   },
   CUW: {
+    key: 'CUW',
     flag: '🇨🇼',
     name: 'Curaçao'
   },
   CIV: {
+    key: 'CIV',
     flag: '🇨🇮',
     name: "Côte d'Ivoire"
   },
   ECU: {
+    key: 'ECU',
     flag: '🇪🇨',
     name: 'Ecuador'
   },
   JPN: {
+    key: 'JPN',
     flag: '🇯🇵',
     name: 'Japan'
   },
   SWE: {
+    key: 'SWE',
     flag: '🇸🇪',
     name: 'Sweden'
   },
   TUN: {
+    key: 'TUN',
     flag: '🇹🇳',
     name: 'Tunisia'
   },
   EGY: {
+    key: 'EGY',
     flag: '🇪🇬',
     name: 'Egypt'
   },
   IRN: {
+    key: 'IRN',
     flag: '🇮🇷',
     name: 'IR Iran'
   },
   NZL: {
+    key: 'NZL',
     flag: '🇳🇿',
     name: 'New Zealand'
   },
   ESP: {
+    key: 'ESP',
     flag: '🇪🇸',
     name: 'Spain'
   },
   CPV: {
+    key: 'CPV',
     flag: '🇨🇻',
     name: 'Cabo Verde'
   },
   KSA: {
+    key: 'KSA',
     flag: '🇸🇦',
     name: 'Saudi Arabia'
   },
   URU: {
+    key: 'URU',
     flag: '🇺🇾',
     name: 'Uruguay'
   },
   SEN: {
+    key: 'SEN',
     flag: '🇸🇳',
     name: 'Senegal'
   },
   IRQ: {
+    key: 'IRQ',
     flag: '🇮🇶',
     name: 'Iraq'
   },
   NOR: {
+    key: 'NOR',
     flag: '🇳🇴',
     name: 'Norway'
   },
   ARG: {
+    key: 'ARG',
     flag: '🇦🇷',
     name: 'Argentina'
   },
   ALG: {
+    key: 'ALG',
     flag: '🇩🇿',
     name: 'Algeria'
   },
   AUT: {
+    key: 'AUT',
     flag: '🇦🇹',
     name: 'Austria'
   },
   JOR: {
+    key: 'JOR',
     flag: '🇯🇴',
     name: 'Jordan'
   },
   COD: {
+    key: 'COD',
     flag: '🇨🇩',
     name: 'Congo DR'
   },
   UZB: {
+    key: 'UZB',
     flag: '🇺🇿',
     name: 'Uzbekistan'
   },
   COL: {
+    key: 'COL',
     flag: '🇨🇴',
     name: 'Colombia'
   },
   GHA: {
+    key: 'GHA',
     flag: '🇬🇭',
     name: 'Ghana'
   },
   PAN: {
+    key: 'PAN',
     flag: '🇵🇦',
     name: 'Panama'
   },
   TBD: {
+    key: 'TBD',
     flag: '🏴',
     name: 'TBD'
   },

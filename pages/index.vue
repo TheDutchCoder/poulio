@@ -7,8 +7,8 @@
         <input type="text" id="email" placeholder="Email" class="p-2 border outline-2 outline-transparent rounded w-full transition-all focus:outline-indigo-500" required v-model="email">
       </div>
       <div class="text-sm">
-        <label for="password" class="block mb-1 font-semibold cursor-pointer">Password <sup class="text-indigo-600">*</sup></label>
-        <input type="password" id="password" placeholder="Password" class="p-2 border outline-2 outline-transparent rounded w-full transition-all focus:outline-indigo-500" v-model="password" required>
+        <label for="username" class="block mb-1 font-semibold cursor-pointer">Name <sup class="text-indigo-600">*</sup></label>
+        <input type="text" id="username" placeholder="Username" class="p-2 border outline-2 outline-transparent rounded w-full transition-all focus:outline-indigo-500" v-model="username" required>
       </div>
       <div v-if="error" class="rounded border border-red-300 bg-red-50 text-red-700 p-2 text-sm">Incorrect username or password.</div>
       <button type="submit" class="rounded p-2 bg-indigo-600 text-white font-semibold mt-4 transition-colors hover:bg-indigo-800 focus:bg-indigo-800">Log in</button>
@@ -17,50 +17,28 @@
 </template>
 
 <script setup>
-definePageMeta({
-  middleware: [
-    function (to, from) {
-      const user = useUser()
-      const userCookie = useCookie('poulio_user')
-
-      if (to.query.logout) {
-        userCookie.value = null
-        // user.value = undefined
-      } else {
-        user.value = userCookie.value
-
-        if (user.value) {
-          return navigateTo('/dashboard')
-        }
-      }
-    }
-  ],
-  hideHeader: true
-})
-
 const email = ref('')
-const password = ref('')
+const username = ref('')
 const error = ref(false)
-const users = useUsers()
-const user = useUser()
-user.value = undefined
 
 async function login() {
-  const shaEmail = await generateSHA1(email.value)
-  const shaPassword = await generateSHA1(password.value)
+  try {
+  const user = useUser();
+  const { login } = useSession();
 
-  const foundUser = users.value.find(user => user.email === shaEmail && user.password === shaPassword)
+  const canonicalEmail = email.value.trim().toLowerCase();
+  const name = username.value.trim();
 
-  const userCookie = useCookie('poulio_user', {
-    expires: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000) // 60 days from now
-  })
-  userCookie.value = foundUser
+  if (!canonicalEmail) throw new Error("Email required");
+  if (!name) throw new Error("Name required");
 
-  if (foundUser) {
-    user.value = foundUser
-    await navigateTo('/dashboard')
-  } else {
-    error.value = true
-  }
+  const id = await generateSHA1(canonicalEmail);
+
+  login(id, name, canonicalEmail)
+
+  await navigateTo("/dashboard");
+} catch (e) {
+  error.value = true
+} finally {}
 }
 </script>

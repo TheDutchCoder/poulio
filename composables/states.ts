@@ -4,6 +4,20 @@ type User = {
   name: string
 }
 
+export type UserSession = {
+  id: string;          // sha1(email)
+  name: string;
+  email?: string;      // optional
+  loggedIn: boolean;
+};
+
+export const useUser = () => useState<UserSession>('user', () => ({
+  id: "",
+  name: "",
+  email: "",
+  loggedIn: false,
+}))
+
 export const useUsers = () => useState<User[]>('users', () => ([
   {
     email: 'a20b27c37502fc5020b5f18bc094705534078603',
@@ -37,4 +51,4 @@ export const useUsers = () => useState<User[]>('users', () => ([
   }
 ]))
 
-export const useUser = () => useState<User | undefined>('user', () => undefined)
+// export const useUser = () => useState<User | undefined>('user', () => undefined)
