@@ -259,6 +259,28 @@ export const COUNTRIES = {
   },
 }
 export type COUNTRIES = keyof typeof COUNTRIES
+export type CountryCode = keyof typeof COUNTRIES
+
+export const GROUP_KEYS = [
+  'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
+] as const
+
+export type GroupKey = typeof GROUP_KEYS[number]
+
+export const GROUP_ROSTER: Record<GroupKey, CountryCode[]> = {
+  A: ['MEX', 'RSA', 'KOR', 'CZE'],
+  B: ['CAN', 'BIH', 'QAT', 'SUI'],
+  C: ['BRA', 'MAR', 'HAI', 'SCO'],
+  D: ['USA', 'PAR', 'AUS', 'TUR'],
+  E: ['GER', 'CUW', 'CIV', 'ECU'],
+  F: ['NED', 'JPN', 'SWE', 'TUN'],
+  G: ['BEL', 'EGY', 'IRN', 'NZL'],
+  H: ['ESP', 'CPV', 'KSA', 'URU'],
+  I: ['FRA', 'SEN', 'IRQ', 'NOR'],
+  J: ['ARG', 'ALG', 'AUT', 'JOR'],
+  K: ['POR', 'COD', 'UZB', 'COL'],
+  L: ['ENG', 'CRO', 'GHA', 'PAN'],
+}
 
 export const USER_GROUP_PICKS = {
   'Reinier': {
@@ -347,320 +369,6 @@ export const USER_GROUP_PICKS = {
   },
 }
 
-export const GROUP_STANDINGS = {
-  'A': [
-    {
-      country: COUNTRIES.MEX,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.RSA,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.KOR,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.CZE,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-  ],
-  'B': [
-    {
-      country: COUNTRIES.CAN,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.BIH,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.QAT,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.SUI,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    }
-  ],
-  'C': [
-    {
-      country: COUNTRIES.BRA,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.MAR,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.HAI,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.SCO,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    }
-  ],
-  'D': [
-    {
-      country: COUNTRIES.USA,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.PAR,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.AUS,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.TUR,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    }
-  ],
-  'E': [
-    {
-      country: COUNTRIES.GER,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.CUW,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.CIV,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.ECU,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    }
-  ],
-  'F': [
-    {
-      country: COUNTRIES.NED,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.JPN,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.SWE,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.TUN,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    }
-  ],
-  'G': [
-    {
-      country: COUNTRIES.BEL,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.EGY,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.IRN,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.NZL,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    }
-  ],
-  'H': [
-    {
-      country: COUNTRIES.ESP,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.CPV,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.KSA,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.URU,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    }
-  ],
-  'I': [
-    {
-      country: COUNTRIES.FRA,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.SEN,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.IRQ,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.NOR,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    }
-  ],
-  'J': [
-    {
-      country: COUNTRIES.ARG,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.ALG,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.AUT,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.JOR,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    }
-  ],
-  'K': [
-    {
-      country: COUNTRIES.POR,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.COD,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.UZB,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.COL,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    }
-  ],
-  'L': [
-    {
-      country: COUNTRIES.ENG,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.CRO,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.GHA,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    },
-    {
-      country: COUNTRIES.PAN,
-      points: 0,
-      qualified: false,
-      eliminated: false,
-    }
-  ],
-}
 
 // export const ROUND_OF_16 = {
 //   1: [COUNTRIES.SWI, COUNTRIES.ITA],

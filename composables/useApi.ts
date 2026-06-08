@@ -1,7 +1,7 @@
 export function useApi() {
-  const $config = useRuntimeConfig()
+  const { public: { predApiBase } } = useRuntimeConfig()
 
-  const baseURL = $config.public.predApiBase
+  const baseURL = predApiBase || '/api'
 
   const save = (user: string, prediction: any) =>
     $fetch(`/p/${encodeURIComponent(user)}`, {
@@ -24,6 +24,22 @@ export function useApi() {
 
   const listUsers = () => $fetch(`/u`, { baseURL });
 
+  const loadStandings = () =>
+    $fetch(`/g`, { baseURL }).catch((error: { statusCode?: number; status?: number; data?: unknown }) => {
+      const status = error?.statusCode ?? error?.status
+      if (status === 404) {
+        return null
+      }
+      throw error
+    })
+
+  const saveStandings = (payload: Record<string, unknown>) =>
+    $fetch(`/g`, {
+      baseURL,
+      method: 'PUT',
+      body: payload,
+    })
+
   return {
     save,
     load,
@@ -31,5 +47,8 @@ export function useApi() {
 
     upsertUser,
     listUsers,
+
+    loadStandings,
+    saveStandings,
   }
 }

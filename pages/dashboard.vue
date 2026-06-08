@@ -53,10 +53,8 @@
 import draggable from 'vuedraggable'
 
 import {
-  USER_GROUP_PICKS,
-  GROUP_STANDINGS,
-  RANKING_POINTS_GROUP,
-  COUNTRIES
+  COUNTRIES,
+  GROUP_KEYS,
 } from '~/constants'
 
 // Current date
@@ -168,12 +166,10 @@ const groupsPayload = computed(() => {
   return Object.fromEntries(
     GROUP_KEYS.map((letter, i) => [
       letter,
-      (groups.value[i] ?? []).map(c => c.key), // or c.code
+      (groups.value[i] ?? []).map(c => c.key),
     ])
   );
 });
-
-const GROUP_KEYS = ["A","B","C","D","E","F","G","H","I","J","K","L"]
 
 const user = useUser()
 </script>
