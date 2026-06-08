@@ -7,6 +7,7 @@ import {
   type KnockoutMatchPick,
   type KnockoutMatchResult,
   type KnockoutResultsPayload,
+  type ResolvedMatchTeams,
 } from '~/utils/knockout'
 import { resolveMatchTeams } from '~/utils/knockoutResolver'
 
@@ -61,4 +62,15 @@ export function ensureUserMatchPick(
 export function hasKnockoutPick(pick: KnockoutMatchPick | null | undefined): boolean {
   if (!pick) return false
   return pick.homeScore != null || pick.awayScore != null || !!pick.winnerCode
+}
+
+export function isMatchupKnown(teams: ResolvedMatchTeams): boolean {
+  return Boolean(teams.homeCode && teams.awayCode)
+}
+
+export function canPickKnockoutMatch(
+  teams: ResolvedMatchTeams,
+  result: KnockoutMatchResult | null | undefined,
+): boolean {
+  return isMatchupKnown(teams) && !result?.played
 }

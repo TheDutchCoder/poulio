@@ -78,10 +78,7 @@
       <CollapsibleArea v-if="shouldShowKnockoutRound(round)">
         <template #header>
           <h2 class="text-xl font-semibold lg:text-2xl">{{ KNOCKOUT_ROUND_LABELS[round] }} predictions</h2>
-          <p class="text-slate-500 text-sm mt-1">
-            <span v-if="canPickKnockoutRound(currentDate, round)">Pick window open</span>
-            <span v-else>Pick window closed</span>
-          </p>
+          <p class="text-slate-500 text-sm mt-1">{{ knockoutRoundStatusText(round) }}</p>
         </template>
         <template #content>
           <div class="grid gap-4 grid-cols-1 lg:grid-cols-2 mt-4">
@@ -91,7 +88,7 @@
               :label="entry.def.label"
               :teams="entry.teams"
               v-model="entry.pick"
-              :disabled="!canPickKnockoutRound(currentDate, round)"
+              :disabled="!entry.canPick"
               :feedback="entry.feedback"
               :points-total="entry.pointsTotal"
               @update:model-value="saveKnockoutPicks"
@@ -157,7 +154,6 @@ import {
   KNOCKOUT_ROUNDS,
   KNOCKOUT_ROUND_LABELS,
 } from '~/constants/knockoutBracket'
-import { canPickKnockoutRound } from '~/constants/pickWindows'
 import { deserializeStandings } from '~/utils/groupStandings'
 import {
   getKnockoutPickFeedback,
@@ -174,7 +170,11 @@ import {
   normalizeKnockoutResults,
 } from '~/utils/knockout'
 import { roundHasAnyPlayedResults, resolveRoundMatches } from '~/utils/knockoutResolver'
-import { ensureUserMatchPick, hasKnockoutPick } from '~/utils/knockoutHelpers'
+import {
+  canPickKnockoutMatch,
+  ensureUserMatchPick,
+  hasKnockoutPick,
+} from '~/utils/knockoutHelpers'
 
 // Current date
 const currentDate = ref(Date.now())
@@ -426,7 +426,7 @@ function refreshMyLeaderboardScore() {
 }
 
 function shouldShowKnockoutRound(round) {
-  if (canPickKnockoutRound(currentDate.value, round)) return true
+  if (dashboardRoundMatches(round).some((entry) => entry.canPick)) return true
   if (roundHasAnyPlayedResults(round, knockoutResults.value)) return true
 
   const roundPicks = knockoutPicks.value?.[round]
@@ -444,10 +444,19 @@ function dashboardRoundMatches(round) {
       def: entry.def,
       teams: entry.teams,
       pick,
+      canPick: canPickKnockoutMatch(entry.teams, result),
       feedback: getKnockoutPickFeedback(pick, result),
       pointsTotal: result?.played ? breakdown.total : null,
     }
   })
+}
+
+function knockoutRoundStatusText(round) {
+  const openCount = dashboardRoundMatches(round).filter((entry) => entry.canPick).length
+  if (openCount > 0) {
+    return `${openCount} match${openCount === 1 ? '' : 'es'} open for picks`
+  }
+  return 'All matches locked'
 }
 
 async function saveKnockoutPicks() {
