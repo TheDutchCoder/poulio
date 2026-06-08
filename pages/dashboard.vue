@@ -111,6 +111,7 @@
               <tr>
                 <th class="px-4 py-2 border-b text-left w-16">#</th>
                 <th class="px-4 py-2 border-b text-left">Player</th>
+                <th class="px-4 py-2 border-b text-center w-12 text-sm font-normal text-slate-500" title="Saved picks">Picks</th>
                 <th class="px-4 py-2 border-b text-right">Total</th>
                 <th class="px-4 py-2 border-b text-right text-sm font-normal text-slate-500">Group</th>
                 <th class="px-4 py-2 border-b text-right text-sm font-normal text-slate-500">KO</th>
@@ -130,6 +131,10 @@
                   <span v-else>{{ index + 1 }}</span>
                 </td>
                 <td class="px-4 py-2 border-b">{{ entry.name }}</td>
+                <td class="px-4 py-2 border-b text-center">
+                  <span v-if="entry.hasPicks" class="text-green-600" title="Picks saved">✓</span>
+                  <span v-else class="text-red-500" title="No picks saved yet">✗</span>
+                </td>
                 <td class="px-4 py-2 border-b text-right font-medium">{{ entry.total }}</td>
                 <td class="px-4 py-2 border-b text-right text-slate-500">{{ entry.group }}</td>
                 <td class="px-4 py-2 border-b text-right text-slate-500">{{ entry.knockout }}</td>
@@ -185,7 +190,7 @@ const endDateGroupPicks = new Date('11-06-2026')
 const endDateGroupPicksFormatted = computed(() => Intl.DateTimeFormat().format(endDateGroupPicks))
 const canMakeGroupPicks = computed(() => currentDate.value < endDateGroupPicks.getTime())
 
-const { load, upsertUser, loadStandings, loadKnockoutResults, listUsers, list } = useApi()
+const { load, upsertUser, loadStandings, loadKnockoutResults, listUsers } = useApi()
 const hydrated = ref(false)
 const savedPrediction = ref(null)
 const standingsPayload = ref(null)
@@ -289,14 +294,10 @@ function applyKnockoutResults(savedKnockout) {
 
 async function rebuildLeaderboard(savedStandings, savedKnockout) {
   const normalizedKnockout = normalizeKnockoutResults(savedKnockout)
-
-  const [users, predictionsList] = await Promise.all([listUsers(), list()])
-  const usersById = Object.fromEntries(
-    (users ?? []).map((entry) => [entry.id, entry.username]),
-  )
+  const users = await listUsers()
 
   const entries = await Promise.all(
-    (predictionsList ?? []).map(async ({ user: userId }) => {
+    (users ?? []).map(async ({ id: userId, username }) => {
       try {
         const prediction = await load(userId)
         const scores = scoreAll(
@@ -307,7 +308,8 @@ async function rebuildLeaderboard(savedStandings, savedKnockout) {
         )
         return {
           id: userId,
-          name: usersById[userId] ?? userId,
+          name: username ?? userId,
+          hasPicks: true,
           total: scores.total,
           group: scores.group,
           knockout: scores.knockout,
@@ -315,7 +317,8 @@ async function rebuildLeaderboard(savedStandings, savedKnockout) {
       } catch {
         return {
           id: userId,
-          name: usersById[userId] ?? userId,
+          name: username ?? userId,
+          hasPicks: false,
           total: 0,
           group: 0,
           knockout: 0,
@@ -410,10 +413,12 @@ function refreshMyLeaderboardScore() {
     existing.total = scores.total
     existing.group = scores.group
     existing.knockout = scores.knockout
+    existing.hasPicks = true
   } else {
     leaderboard.value.push({
       id: user.value.id,
       name: user.value.name,
+      hasPicks: true,
       total: scores.total,
       group: scores.group,
       knockout: scores.knockout,
