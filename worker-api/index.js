@@ -83,28 +83,65 @@ export default {
       "Access-Control-Allow-Origin": allowed.has(origin)
         ? origin
         : "https://poulio.net",
-      "Access-Control-Allow-Methods": "GET,PUT,OPTIONS",
+      "Access-Control-Allow-Methods": "GET,PUT,DELETE,OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
       Vary: "Origin",
     };
 
     if (req.method === "OPTIONS") return new Response(null, { headers: cors });
 
-    // GET /u -> list users
+    // GET /u -> list users (includes prediction-only accounts)
     if (req.method === "GET" && url.pathname === "/u") {
-      const { results } = await env.DB.prepare(
-        "SELECT id, username, email, updated_at FROM users ORDER BY updated_at DESC"
-      ).all();
+      const [{ results: userRows }, { results: predictionRows }] = await Promise.all([
+        env.DB.prepare(
+          "SELECT id, username, email, updated_at FROM users ORDER BY updated_at DESC"
+        ).all(),
+        env.DB.prepare("SELECT user, updated_at FROM predictions ORDER BY updated_at DESC").all(),
+      ]);
+
+      const byId = new Map();
+
+      for (const row of userRows) {
+        byId.set(row.id, {
+          id: row.id,
+          username: row.username,
+          email: row.email,
+          updated_at: row.updated_at,
+        });
+      }
+
+      for (const row of predictionRows) {
+        if (byId.has(row.user)) continue;
+        byId.set(row.user, {
+          id: row.user,
+          username: row.user,
+          email: null,
+          updated_at: row.updated_at,
+        });
+      }
+
+      const results = Array.from(byId.values()).sort(
+        (a, b) => (b.updated_at ?? 0) - (a.updated_at ?? 0)
+      );
 
       return new Response(JSON.stringify(results), {
         headers: { ...cors, "Content-Type": "application/json" },
       });
     }
 
-    // PUT /u/:id -> upsert user profile { username, email? }
+    // PUT/DELETE /u/:id -> upsert or remove user profile
     const um = url.pathname.match(/^\/u\/([^/]+)$/);
     if (um) {
       const id = decodeURIComponent(um[1]).trim();
+
+      if (req.method === "DELETE") {
+        await env.DB.prepare("DELETE FROM predictions WHERE user = ?").bind(id).run();
+        await env.DB.prepare("DELETE FROM users WHERE id = ?").bind(id).run();
+
+        return new Response(JSON.stringify({ ok: true, id }), {
+          headers: { ...cors, "Content-Type": "application/json" },
+        });
+      }
 
       if (req.method !== "PUT") {
         return new Response("Method not allowed", { status: 405, headers: cors });

@@ -84,23 +84,38 @@
                 <th class="px-4 py-2 border-b text-left">ID</th>
                 <th class="px-4 py-2 border-b text-left">Email</th>
                 <th class="px-4 py-2 border-b text-left">Username</th>
+                <th class="px-4 py-2 border-b text-right w-28"></th>
               </tr>
             </thead>
             <tbody class="bg-white text-lg">
               <tr v-if="isLoadingUsers">
-                <td colspan="3" class="px-4 py-2 border-b text-center text-slate-500">Loading…</td>
+                <td colspan="4" class="px-4 py-2 border-b text-center text-slate-500">Loading…</td>
               </tr>
               <tr v-else-if="usersError">
-                <td colspan="3" class="px-4 py-2 border-b text-center text-red-600">{{ usersError }}</td>
+                <td colspan="4" class="px-4 py-2 border-b text-center text-red-600">{{ usersError }}</td>
+              </tr>
+              <tr v-else-if="users.length === 0">
+                <td colspan="4" class="px-4 py-2 border-b text-center text-slate-500">No users yet</td>
               </tr>
               <tr v-for="entry in users" :key="entry.id" class="hover:bg-gray-50">
                 <td class="px-4 py-2 border-b font-mono text-sm">{{ entry.id }}</td>
-                <td class="px-4 py-2 border-b">{{ entry.email }}</td>
+                <td class="px-4 py-2 border-b">{{ entry.email ?? '—' }}</td>
                 <td class="px-4 py-2 border-b">{{ entry.username }}</td>
+                <td class="px-4 py-2 border-b text-right">
+                  <button
+                    type="button"
+                    class="text-sm text-red-600 hover:text-red-800 disabled:opacity-50"
+                    :disabled="deletingUserId === entry.id"
+                    @click="confirmDeleteUser(entry)"
+                  >
+                    {{ deletingUserId === entry.id ? 'Deleting…' : 'Delete' }}
+                  </button>
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
+        <p v-if="deleteUserError" class="mt-4 text-red-600 text-sm text-center">{{ deleteUserError }}</p>
       </template>
     </CollapsibleArea>
   </div>
@@ -119,11 +134,13 @@ definePageMeta({
   middleware: 'admin',
 })
 
-const { listUsers, loadStandings, saveStandings: saveStandingsApi } = useApi()
+const { listUsers, loadStandings, saveStandings: saveStandingsApi, deleteUser: deleteUserApi } = useApi()
 
 const users = ref([])
 const isLoadingUsers = ref(true)
 const usersError = ref(null)
+const deletingUserId = ref(null)
+const deleteUserError = ref(null)
 
 const standings = ref(makeDefaultStandings())
 const hydrated = ref(false)
@@ -131,14 +148,7 @@ const isSaving = ref(false)
 const standingsError = ref(null)
 
 onMounted(async () => {
-  try {
-    isLoadingUsers.value = true
-    users.value = await listUsers()
-  } catch (e) {
-    usersError.value = e?.message ?? String(e)
-  } finally {
-    isLoadingUsers.value = false
-  }
+  await loadUsers()
 
   try {
     const saved = await loadStandings()
@@ -150,6 +160,38 @@ onMounted(async () => {
     hydrated.value = true
   }
 })
+
+async function loadUsers() {
+  try {
+    isLoadingUsers.value = true
+    usersError.value = null
+    users.value = await listUsers()
+  } catch (e) {
+    usersError.value = e?.message ?? String(e)
+  } finally {
+    isLoadingUsers.value = false
+  }
+}
+
+async function confirmDeleteUser(entry) {
+  const label = entry.username || entry.id
+  const confirmed = window.confirm(
+    `Delete user "${label}"?\n\nThis permanently removes their account and predictions.`,
+  )
+
+  if (!confirmed) return
+
+  try {
+    deletingUserId.value = entry.id
+    deleteUserError.value = null
+    await deleteUserApi(entry.id)
+    users.value = users.value.filter((user) => user.id !== entry.id)
+  } catch (e) {
+    deleteUserError.value = e?.message ?? String(e)
+  } finally {
+    deletingUserId.value = null
+  }
+}
 
 async function saveStandings() {
   if (!hydrated.value) return

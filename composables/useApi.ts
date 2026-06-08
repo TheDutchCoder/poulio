@@ -24,6 +24,12 @@ export function useApi() {
 
   const listUsers = () => $fetch(`/u`, { baseURL });
 
+  const deleteUser = (id: string) =>
+    $fetch(`/u/${encodeURIComponent(id)}`, {
+      baseURL,
+      method: 'DELETE',
+    })
+
   const loadStandings = () =>
     $fetch(`/g`, { baseURL }).catch((error: { statusCode?: number; status?: number; data?: unknown }) => {
       const status = error?.statusCode ?? error?.status
@@ -47,6 +53,7 @@ export function useApi() {
 
     upsertUser,
     listUsers,
+    deleteUser,
 
     loadStandings,
     saveStandings,

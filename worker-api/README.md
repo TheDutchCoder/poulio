@@ -39,6 +39,14 @@ Payload shape (array order = standing):
 
 Uses the same `env.DB` binding as `/p` and `/u`. Single row with `id = 'global'`.
 
+## `/u` endpoint
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/u` | List users (merges `users` table + prediction-only accounts) |
+| PUT | `/u/:id` | Upsert user profile `{ username, email? }` |
+| DELETE | `/u/:id` | Delete user row and their predictions |
+
 ## CORS
 
 Allowed origins include `localhost:3000`, Netlify preview, and `poulio.net`. The Nuxt app also proxies via `/api/g` during local dev.
