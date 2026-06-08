@@ -38,6 +38,8 @@
                 @end="drag=false"
                 @change="updateGroupPicks"
                 :disabled="!canMakeGroupPicks"
+                :delay="150"
+                :delay-on-touch-only="true"
                 ghost-class="bg-indigo-50"
                 item-key="key"
                 class="bg-white overflow-hidden divide-y text-lg"
@@ -159,6 +161,7 @@ import {
   KNOCKOUT_ROUNDS,
   KNOCKOUT_ROUND_LABELS,
 } from '~/constants/knockoutBracket'
+import { GROUP_PICK_WINDOW } from '~/constants/pickWindows'
 import { deserializeStandings } from '~/utils/groupStandings'
 import {
   getKnockoutPickFeedback,
@@ -185,9 +188,11 @@ import {
 const currentDate = ref(Date.now())
 let currentDateTimer = null
 
-// Group stage pick deadline
-const endDateGroupPicks = new Date('11-06-2026')
-const endDateGroupPicksFormatted = computed(() => Intl.DateTimeFormat().format(endDateGroupPicks))
+// Group stage pick deadline (ISO date — Safari/iOS rejects MM-DD-YYYY strings)
+const endDateGroupPicks = GROUP_PICK_WINDOW.end
+const endDateGroupPicksFormatted = computed(() =>
+  new Intl.DateTimeFormat(undefined, { dateStyle: 'long' }).format(endDateGroupPicks),
+)
 const canMakeGroupPicks = computed(() => currentDate.value < endDateGroupPicks.getTime())
 
 const { load, upsertUser, loadStandings, loadKnockoutResults, listUsers } = useApi()
