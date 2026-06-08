@@ -26,6 +26,14 @@
 
             <div class="border rounded-lg shadow-lg overflow-hidden divide-y">
               <div class="bg-gray-50 text-lg px-3 py-2 font-semibold">Group {{ GROUP_KEYS[index] }}</div>
+              <div
+                v-if="hasPublishedStandings"
+                class="flex gap-2 items-center px-3 py-1.5 bg-gray-50 text-sm text-slate-500 border-b"
+              >
+                <div class="flex-1 min-w-0">Team</div>
+                <div class="w-10 text-right tabular-nums">Pts</div>
+                <div class="w-16 text-right tabular-nums">Your pts</div>
+              </div>
               <draggable 
                 v-model="groups[index]" 
                 :group="`group-${index}`"
@@ -46,16 +54,22 @@
                       pickRowClass(index, element.key),
                     ]"
                   >
-                    <div class="text-sm">{{ rank + 1 }}</div>
-                    <div>{{ element.flag }}</div>
-                    <div class="flex-1">{{ element.name }}</div>
-                    <span
-                      v-if="pickPointsBadge(index, element.key) != null"
-                      class="text-sm font-medium tabular-nums"
-                      :class="pickPointsClass(index, element.key)"
-                    >
-                      {{ pickPointsBadge(index, element.key) }}
-                    </span>
+                    <div class="flex-1 min-w-0 flex gap-2 items-center">
+                      <div class="text-sm w-4">{{ rank + 1 }}</div>
+                      <div>{{ element.flag }}</div>
+                      <div class="flex-1 min-w-0 truncate">{{ element.name }}</div>
+                    </div>
+                    <template v-if="hasPublishedStandings">
+                      <div class="w-10 text-right text-sm tabular-nums text-slate-500">
+                        {{ tournamentPointsForTeam(index, element.key) ?? '—' }}
+                      </div>
+                      <div
+                        class="w-16 text-right text-sm font-medium tabular-nums"
+                        :class="earnedPointsClass(index, element.key)"
+                      >
+                        {{ earnedPointsDisplay(index, element.key) }}
+                      </div>
+                    </template>
                   </div>
                 </template>
               </draggable>
@@ -134,34 +148,6 @@
       </template>
     </CollapsibleArea>
 
-    <CollapsibleArea v-if="hasPublishedStandings">
-      <template #header>
-        <h2 class="text-xl font-semibold lg:text-2xl">Actual group stage results</h2>
-      </template>
-      <template #content>
-        <div class="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-4">
-          <div class="w-96 mx-auto" v-for="(group, index) in standings" :key="GROUP_KEYS[index]">
-            <div class="border rounded-lg shadow-lg overflow-hidden divide-y">
-              <div class="bg-gray-50 text-lg px-3 py-2 font-semibold">Group {{ GROUP_KEYS[index] }}</div>
-              <div class="bg-white divide-y text-lg">
-                <div
-                  v-for="(entry, rank) in group"
-                  :key="entry.country.key"
-                  class="flex flex-wrap gap-x-2 gap-y-1 items-center px-3 py-2"
-                >
-                  <span class="text-sm w-4">{{ rank + 1 }}</span>
-                  <span>{{ entry.country.flag }}</span>
-                  <span class="flex-1 min-w-0">{{ entry.country.name }}</span>
-                  <span class="text-sm text-slate-500">{{ entry.points }} pts</span>
-                  <span v-if="entry.qualified" class="text-sm text-green-600" title="Qualified">Q</span>
-                  <span v-if="entry.played" class="text-sm text-slate-600" title="Position final">Final</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </template>
-    </CollapsibleArea>
   </div>
 </template>
 
@@ -182,6 +168,7 @@ import {
   getKnockoutPickFeedback,
   getPickFeedback,
   getPointsForTeam,
+  getTeamPlayed,
   scoreAll,
   scoreKnockoutMatch,
 } from '~/utils/scoring'
@@ -397,28 +384,29 @@ function pickRowClass(groupIndex, teamCode) {
   return ''
 }
 
-function pickPointsBadge(groupIndex, teamCode) {
+function tournamentPointsForTeam(groupIndex, teamCode) {
+  const entry = standings.value[groupIndex]?.find(e => e.country.key === teamCode)
+  return entry?.points ?? null
+}
+
+function earnedPointsForTeam(groupIndex, teamCode) {
+  const groupKey = groupKeyForIndex(groupIndex)
+  if (!getTeamPlayed(standingsPayload.value, groupKey, teamCode)) return null
+  return getPointsForTeam(groupsPayload.value, standingsPayload.value, groupKey, teamCode)
+}
+
+function earnedPointsDisplay(groupIndex, teamCode) {
+  const points = earnedPointsForTeam(groupIndex, teamCode)
+  return points === null ? '—' : points
+}
+
+function earnedPointsClass(groupIndex, teamCode) {
   const groupKey = groupKeyForIndex(groupIndex)
   const feedback = getPickFeedback(groupsPayload.value, standingsPayload.value, groupKey, teamCode)
 
-  if (feedback === 'neutral') return null
-  if (feedback === 'incorrect') return '0'
-
-  const points = getPointsForTeam(groupsPayload.value, standingsPayload.value, groupKey, teamCode)
-  return `+${points}`
-}
-
-function pickPointsClass(groupIndex, teamCode) {
-  const feedback = getPickFeedback(
-    groupsPayload.value,
-    standingsPayload.value,
-    groupKeyForIndex(groupIndex),
-    teamCode,
-  )
-
   if (feedback === 'correct') return 'text-green-700'
   if (feedback === 'incorrect') return 'text-red-600'
-  return ''
+  return 'text-slate-500'
 }
 
 function refreshMyLeaderboardScore() {
