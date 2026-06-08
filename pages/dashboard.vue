@@ -4,7 +4,7 @@
       <template #header>
         <div class="flex flex-col gap-1">
           <h1 class="text-xl font-semibold lg:text-2xl">Group Stage Picks for {{ user.name }}</h1>
-          <p v-if="hasPublishedStandings || hasKnockoutResults" class="text-slate-500 text-sm mt-2">
+          <p class="text-slate-500 text-sm mt-2">
             Your score: <span class="font-semibold">{{ myTotalScore.total }}</span>
             <span class="text-slate-400"> (group {{ myTotalScore.group }} + KO {{ myTotalScore.knockout }})</span>
           </p>
@@ -79,41 +79,36 @@
       </template>
     </CollapsibleArea>
 
-    <CollapsibleArea
-      v-for="round in KNOCKOUT_ROUNDS"
-      :key="`pick-${round}`"
-      v-if="shouldShowKnockoutRound(round)"
-    >
-      <template #header>
-        <h2 class="text-xl font-semibold lg:text-2xl">{{ KNOCKOUT_ROUND_LABELS[round] }} predictions</h2>
-        <p class="text-slate-500 text-sm mt-1">
-          <span v-if="canPickKnockoutRound(currentDate, round)">Pick window open</span>
-          <span v-else>Pick window closed</span>
-        </p>
-      </template>
-      <template #content>
-        <div class="grid gap-4 grid-cols-1 lg:grid-cols-2 mt-4">
-          <KnockoutMatchCard
-            v-for="entry in dashboardRoundMatches(round)"
-            :key="entry.def.id"
-            :label="entry.def.label"
-            :teams="entry.teams"
-            v-model="entry.pick"
-            :disabled="!canPickKnockoutRound(currentDate, round)"
-            :feedback="entry.feedback"
-            :points-total="entry.pointsTotal"
-            @update:model-value="saveKnockoutPicks"
-          />
-        </div>
-      </template>
-    </CollapsibleArea>
+    <template v-for="round in KNOCKOUT_ROUNDS" :key="`pick-${round}`">
+      <CollapsibleArea v-if="shouldShowKnockoutRound(round)">
+        <template #header>
+          <h2 class="text-xl font-semibold lg:text-2xl">{{ KNOCKOUT_ROUND_LABELS[round] }} predictions</h2>
+          <p class="text-slate-500 text-sm mt-1">
+            <span v-if="canPickKnockoutRound(currentDate, round)">Pick window open</span>
+            <span v-else>Pick window closed</span>
+          </p>
+        </template>
+        <template #content>
+          <div class="grid gap-4 grid-cols-1 lg:grid-cols-2 mt-4">
+            <KnockoutMatchCard
+              v-for="entry in dashboardRoundMatches(round)"
+              :key="entry.def.id"
+              :label="entry.def.label"
+              :teams="entry.teams"
+              v-model="entry.pick"
+              :disabled="!canPickKnockoutRound(currentDate, round)"
+              :feedback="entry.feedback"
+              :points-total="entry.pointsTotal"
+              @update:model-value="saveKnockoutPicks"
+            />
+          </div>
+        </template>
+      </CollapsibleArea>
+    </template>
 
     <CollapsibleArea is-open>
       <template #header>
         <h2 class="text-xl font-semibold lg:text-2xl">Leaderboard</h2>
-        <p v-if="!hasPublishedStandings && !hasKnockoutResults" class="text-slate-500 text-sm mt-2">
-          Scores appear once results are published.
-        </p>
       </template>
       <template #content>
         <div v-if="isLoadingLeaderboard" class="text-slate-500 text-sm mt-2">Loading scores…</div>
@@ -136,7 +131,12 @@
                 class="hover:bg-gray-50"
                 :class="{ 'bg-indigo-50 font-medium': entry.id === user.id }"
               >
-                <td class="px-4 py-2 border-b">{{ index + 1 }}</td>
+                <td class="px-4 py-2 border-b">
+                  <span v-if="hasAnyPublishedResults && index === 0">🏆</span>
+                  <span v-else-if="hasAnyPublishedResults && index === 1">🥈</span>
+                  <span v-else-if="hasAnyPublishedResults && index === 2">🥉</span>
+                  <span v-else>{{ index + 1 }}</span>
+                </td>
                 <td class="px-4 py-2 border-b">{{ entry.name }}</td>
                 <td class="px-4 py-2 border-b text-right font-medium">{{ entry.total }}</td>
                 <td class="px-4 py-2 border-b text-right text-slate-500">{{ entry.group }}</td>
@@ -194,6 +194,7 @@ const { load, upsertUser, loadStandings, loadKnockoutResults, listUsers, list } 
 const hydrated = ref(false)
 const savedPrediction = ref(null)
 const standingsPayload = ref(null)
+const knockoutResultsPayload = ref(null)
 const standings = ref(deserializeStandings(null))
 const knockoutResults = ref(makeEmptyKnockoutResults())
 const knockoutPicks = ref({})
@@ -203,7 +204,8 @@ const leaderboardError = ref(null)
 let standingsPollTimer = null
 
 const hasPublishedStandings = computed(() => standingsPayload.value?.groups != null)
-const hasKnockoutResults = computed(() => knockoutResults.value?.matches != null)
+const hasKnockoutResults = computed(() => knockoutResultsPayload.value != null)
+const hasAnyPublishedResults = computed(() => hasPublishedStandings.value || hasKnockoutResults.value)
 
 const myTotalScore = computed(() =>
   scoreAll(groupsPayload.value, standingsPayload.value, knockoutPicks.value, knockoutResults.value),
@@ -286,15 +288,11 @@ function applyStandings(savedStandings) {
 }
 
 function applyKnockoutResults(savedKnockout) {
+  knockoutResultsPayload.value = savedKnockout
   knockoutResults.value = normalizeKnockoutResults(savedKnockout)
 }
 
 async function rebuildLeaderboard(savedStandings, savedKnockout) {
-  if (!savedStandings?.groups) {
-    leaderboard.value = []
-    return
-  }
-
   const normalizedKnockout = normalizeKnockoutResults(savedKnockout)
 
   const [users, predictionsList] = await Promise.all([listUsers(), list()])
