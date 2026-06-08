@@ -4,8 +4,9 @@
       <template #header>
         <div class="flex flex-col gap-1">
           <h1 class="text-xl font-semibold lg:text-2xl">Group Stage Picks for {{ user.name }}</h1>
-          <p v-if="hasPublishedStandings" class="text-slate-500 text-sm mt-2">
-            Your score: <span class="font-semibold">{{ myGroupScore }}</span> / {{ MAX_GROUP_STAGE_POINTS }}
+          <p v-if="hasPublishedStandings || hasKnockoutResults" class="text-slate-500 text-sm mt-2">
+            Your score: <span class="font-semibold">{{ myTotalScore.total }}</span>
+            <span class="text-slate-400"> (group {{ myTotalScore.group }} + KO {{ myTotalScore.knockout }})</span>
           </p>
         </div>
         <ul>
@@ -64,11 +65,40 @@
       </template>
     </CollapsibleArea>
 
-    <CollapsibleArea :is-open="hasPublishedStandings">
+    <CollapsibleArea
+      v-for="round in KNOCKOUT_ROUNDS"
+      :key="`pick-${round}`"
+      v-if="shouldShowKnockoutRound(round)"
+    >
       <template #header>
-        <h2 class="text-xl font-semibold lg:text-2xl">Group stage leaderboard</h2>
-        <p v-if="!hasPublishedStandings" class="text-slate-500 text-sm mt-2">
-          Scores appear once group stage results are published.
+        <h2 class="text-xl font-semibold lg:text-2xl">{{ KNOCKOUT_ROUND_LABELS[round] }} predictions</h2>
+        <p class="text-slate-500 text-sm mt-1">
+          <span v-if="canPickKnockoutRound(currentDate, round)">Pick window open</span>
+          <span v-else>Pick window closed</span>
+        </p>
+      </template>
+      <template #content>
+        <div class="grid gap-4 grid-cols-1 lg:grid-cols-2 mt-4">
+          <KnockoutMatchCard
+            v-for="entry in dashboardRoundMatches(round)"
+            :key="entry.def.id"
+            :label="entry.def.label"
+            :teams="entry.teams"
+            v-model="entry.pick"
+            :disabled="!canPickKnockoutRound(currentDate, round)"
+            :feedback="entry.feedback"
+            :points-total="entry.pointsTotal"
+            @update:model-value="saveKnockoutPicks"
+          />
+        </div>
+      </template>
+    </CollapsibleArea>
+
+    <CollapsibleArea is-open>
+      <template #header>
+        <h2 class="text-xl font-semibold lg:text-2xl">Leaderboard</h2>
+        <p v-if="!hasPublishedStandings && !hasKnockoutResults" class="text-slate-500 text-sm mt-2">
+          Scores appear once results are published.
         </p>
       </template>
       <template #content>
@@ -80,7 +110,9 @@
               <tr>
                 <th class="px-4 py-2 border-b text-left w-16">#</th>
                 <th class="px-4 py-2 border-b text-left">Player</th>
-                <th class="px-4 py-2 border-b text-right">Points</th>
+                <th class="px-4 py-2 border-b text-right">Total</th>
+                <th class="px-4 py-2 border-b text-right text-sm font-normal text-slate-500">Group</th>
+                <th class="px-4 py-2 border-b text-right text-sm font-normal text-slate-500">KO</th>
               </tr>
             </thead>
             <tbody class="bg-white text-lg">
@@ -92,7 +124,9 @@
               >
                 <td class="px-4 py-2 border-b">{{ index + 1 }}</td>
                 <td class="px-4 py-2 border-b">{{ entry.name }}</td>
-                <td class="px-4 py-2 border-b text-right">{{ entry.points }}</td>
+                <td class="px-4 py-2 border-b text-right font-medium">{{ entry.total }}</td>
+                <td class="px-4 py-2 border-b text-right text-slate-500">{{ entry.group }}</td>
+                <td class="px-4 py-2 border-b text-right text-slate-500">{{ entry.knockout }}</td>
               </tr>
             </tbody>
           </table>
@@ -138,57 +172,55 @@ import {
   COUNTRIES,
   GROUP_KEYS,
 } from '~/constants'
+import {
+  KNOCKOUT_ROUNDS,
+  KNOCKOUT_ROUND_LABELS,
+} from '~/constants/knockoutBracket'
+import { canPickKnockoutRound } from '~/constants/pickWindows'
 import { deserializeStandings } from '~/utils/groupStandings'
 import {
+  getKnockoutPickFeedback,
   getPickFeedback,
   getPointsForTeam,
-  MAX_GROUP_STAGE_POINTS,
-  scoreGroupStage,
+  scoreAll,
+  scoreKnockoutMatch,
 } from '~/utils/scoring'
+import {
+  getKnockoutPicksFromPrediction,
+  makeEmptyKnockoutResults,
+  mergePredictionPayload,
+  normalizeKnockoutResults,
+} from '~/utils/knockout'
+import { roundHasAnyPlayedResults, resolveRoundMatches } from '~/utils/knockoutResolver'
+import { ensureUserMatchPick, hasKnockoutPick } from '~/utils/knockoutHelpers'
 
 // Current date
-const currentDate = Date.now()
+const currentDate = ref(Date.now())
+let currentDateTimer = null
 
-// Group stage.
+// Group stage pick deadline
 const endDateGroupPicks = new Date('11-06-2026')
 const endDateGroupPicksFormatted = computed(() => Intl.DateTimeFormat().format(endDateGroupPicks))
-const canMakeGroupPicks = computed(() => currentDate < endDateGroupPicks)
+const canMakeGroupPicks = computed(() => currentDate.value < endDateGroupPicks.getTime())
 
-// 32nd stage
-const startDate32ndPicks = new Date('27-06-2026')
-const endDate32ndPicks = new Date('28-06-2026')
-const canMake32ndPicks = computed(() => currentDate >= startDate32ndPicks && currentDate < endDate32ndPicks)
-
-// 16th stage
-const startDate16thPicks = new Date('03-07-2026')
-const endDate16thPicks = new Date('04-07-2026')
-const canMake16thPicks = computed(() => currentDate >= startDate16thPicks && currentDate < endDate16thPicks)
-
-// 4th stage
-const startDate4thPicks = new Date('07-07-2026')
-const endDate4thPicks = new Date('09-07-2026')
-const canMake4thPicks = computed(() => currentDate >= startDate4thPicks && currentDate < endDate4thPicks)
-
-// Semi finals
-const startDateSemiFinalPicks = new Date('11-07-2026')
-const endDateSemiFinalPicks = new Date('14-07-2026')
-const canMakeSemiFinalPicks = computed(() => currentDate >= startDateSemiFinalPicks && currentDate < endDateSemiFinalPicks)
-
-// Finals
-const startDateFinalPicks = new Date('15-07-2026')
-const endDateFinalPicks = new Date('19-07-2026')
-const canMakeFinalPicks = computed(() => currentDate >= startDateFinalPicks && currentDate < endDateFinalPicks)
-
-const { load, upsertUser, loadStandings, listUsers, list } = useApi()
+const { load, upsertUser, loadStandings, loadKnockoutResults, listUsers, list } = useApi()
 const hydrated = ref(false)
+const savedPrediction = ref(null)
 const standingsPayload = ref(null)
 const standings = ref(deserializeStandings(null))
+const knockoutResults = ref(makeEmptyKnockoutResults())
+const knockoutPicks = ref({})
 const leaderboard = ref([])
 const isLoadingLeaderboard = ref(false)
 const leaderboardError = ref(null)
 let standingsPollTimer = null
 
 const hasPublishedStandings = computed(() => standingsPayload.value?.groups != null)
+const hasKnockoutResults = computed(() => knockoutResults.value?.matches != null)
+
+const myTotalScore = computed(() =>
+  scoreAll(groupsPayload.value, standingsPayload.value, knockoutPicks.value, knockoutResults.value),
+)
 
 const groups = ref(Array.from({ length: 12 }, () => []))
 
@@ -201,9 +233,6 @@ const groupsPayload = computed(() =>
   ),
 )
 
-const myGroupScore = computed(() =>
-  scoreGroupStage(groupsPayload.value, standingsPayload.value),
-)
 
 onMounted(async () => {
   try {
@@ -212,11 +241,14 @@ onMounted(async () => {
     await upsertUser(user.value.id, user.value.name, user.value.email)
 
     const saved = await load(user.value.id)
+    savedPrediction.value = saved
     const des = deserializeGroups(saved)
     const hasAny = des.some(g => g.length > 0)
     groups.value = hasAny ? des : makeDefaultGroups()
+    knockoutPicks.value = getKnockoutPicksFromPrediction(saved)
   } catch (e) {
     groups.value = makeDefaultGroups()
+    knockoutPicks.value = {}
   } finally {
     hydrated.value = true
     isLoading.value = false
@@ -224,11 +256,27 @@ onMounted(async () => {
 
   await loadScores()
   startStandingsPolling()
+  startCurrentDateRefresh()
 })
 
 onUnmounted(() => {
   stopStandingsPolling()
+  stopCurrentDateRefresh()
 })
+
+function startCurrentDateRefresh() {
+  stopCurrentDateRefresh()
+  currentDateTimer = setInterval(() => {
+    currentDate.value = Date.now()
+  }, 60 * 60 * 1000)
+}
+
+function stopCurrentDateRefresh() {
+  if (currentDateTimer) {
+    clearInterval(currentDateTimer)
+    currentDateTimer = null
+  }
+}
 
 function startStandingsPolling() {
   stopStandingsPolling()
@@ -250,11 +298,17 @@ function applyStandings(savedStandings) {
   standings.value = deserializeStandings(savedStandings)
 }
 
-async function rebuildLeaderboard(savedStandings) {
+function applyKnockoutResults(savedKnockout) {
+  knockoutResults.value = normalizeKnockoutResults(savedKnockout)
+}
+
+async function rebuildLeaderboard(savedStandings, savedKnockout) {
   if (!savedStandings?.groups) {
     leaderboard.value = []
     return
   }
+
+  const normalizedKnockout = normalizeKnockoutResults(savedKnockout)
 
   const [users, predictionsList] = await Promise.all([listUsers(), list()])
   const usersById = Object.fromEntries(
@@ -265,29 +319,43 @@ async function rebuildLeaderboard(savedStandings) {
     (predictionsList ?? []).map(async ({ user: userId }) => {
       try {
         const prediction = await load(userId)
+        const scores = scoreAll(
+          prediction?.groups,
+          savedStandings,
+          getKnockoutPicksFromPrediction(prediction),
+          normalizedKnockout,
+        )
         return {
           id: userId,
           name: usersById[userId] ?? userId,
-          points: scoreGroupStage(prediction?.groups, savedStandings),
+          total: scores.total,
+          group: scores.group,
+          knockout: scores.knockout,
         }
       } catch {
         return {
           id: userId,
           name: usersById[userId] ?? userId,
-          points: 0,
+          total: 0,
+          group: 0,
+          knockout: 0,
         }
       }
     }),
   )
 
-  leaderboard.value = entries.sort((a, b) => b.points - a.points || a.name.localeCompare(b.name))
+  leaderboard.value = entries.sort((a, b) => b.total - a.total || a.name.localeCompare(b.name))
 }
 
 async function refreshStandings() {
   try {
-    const savedStandings = await loadStandings()
+    const [savedStandings, savedKnockout] = await Promise.all([
+      loadStandings(),
+      loadKnockoutResults(),
+    ])
     applyStandings(savedStandings)
-    await rebuildLeaderboard(savedStandings)
+    applyKnockoutResults(savedKnockout)
+    await rebuildLeaderboard(savedStandings, savedKnockout)
   } catch {
     // ignore transient poll failures
   }
@@ -298,9 +366,13 @@ async function loadScores() {
     isLoadingLeaderboard.value = true
     leaderboardError.value = null
 
-    const savedStandings = await loadStandings()
+    const [savedStandings, savedKnockout] = await Promise.all([
+      loadStandings(),
+      loadKnockoutResults(),
+    ])
     applyStandings(savedStandings)
-    await rebuildLeaderboard(savedStandings)
+    applyKnockoutResults(savedKnockout)
+    await rebuildLeaderboard(savedStandings, savedKnockout)
   } catch (e) {
     leaderboardError.value = e?.message ?? String(e)
   } finally {
@@ -350,24 +422,70 @@ function pickPointsClass(groupIndex, teamCode) {
 }
 
 function refreshMyLeaderboardScore() {
-  if (!standingsPayload.value?.groups) return
-
-  const points = scoreGroupStage(groupsPayload.value, standingsPayload.value)
+  const scores = myTotalScore.value
   const existing = leaderboard.value.find((entry) => entry.id === user.value.id)
 
   if (existing) {
-    existing.points = points
+    existing.total = scores.total
+    existing.group = scores.group
+    existing.knockout = scores.knockout
   } else {
     leaderboard.value.push({
       id: user.value.id,
       name: user.value.name,
-      points,
+      total: scores.total,
+      group: scores.group,
+      knockout: scores.knockout,
     })
   }
 
   leaderboard.value = [...leaderboard.value].sort(
-    (a, b) => b.points - a.points || a.name.localeCompare(b.name),
+    (a, b) => b.total - a.total || a.name.localeCompare(b.name),
   )
+}
+
+function shouldShowKnockoutRound(round) {
+  if (canPickKnockoutRound(currentDate.value, round)) return true
+  if (roundHasAnyPlayedResults(round, knockoutResults.value)) return true
+
+  const roundPicks = knockoutPicks.value?.[round]
+  if (!roundPicks) return false
+  return Object.values(roundPicks).some((pick) => hasKnockoutPick(pick))
+}
+
+function dashboardRoundMatches(round) {
+  return resolveRoundMatches(round, standingsPayload.value, knockoutResults.value).map((entry) => {
+    const pick = ensureUserMatchPick(knockoutPicks.value, round, entry.def.id)
+    const result = knockoutResults.value.matches?.[round]?.[entry.def.id] ?? null
+    const breakdown = scoreKnockoutMatch(pick, result)
+
+    return {
+      def: entry.def,
+      teams: entry.teams,
+      pick,
+      feedback: getKnockoutPickFeedback(pick, result),
+      pointsTotal: result?.played ? breakdown.total : null,
+    }
+  })
+}
+
+async function saveKnockoutPicks() {
+  if (!hydrated.value || !user.value.loggedIn) return
+
+  const { save } = useApi()
+
+  try {
+    const payload = mergePredictionPayload(
+      savedPrediction.value,
+      groupsPayload.value,
+      knockoutPicks.value,
+    )
+    await save(user.value.id, payload)
+    savedPrediction.value = payload
+    refreshMyLeaderboardScore()
+  } catch {
+    // ignore save errors for now
+  }
 }
 
 function deserializeGroups(saved) {
@@ -408,12 +526,14 @@ async function updateGroupPicks() {
   try {
     isLoading.value = false
 
-    const payload = {
-      v: 1,
-      groups: groupsPayload.value
-    }
+    const payload = mergePredictionPayload(
+      savedPrediction.value,
+      groupsPayload.value,
+      knockoutPicks.value,
+    )
 
     await save(user.value.id, payload)
+    savedPrediction.value = payload
     refreshMyLeaderboardScore()
   } finally {
     isLoading.value = false

@@ -46,6 +46,22 @@ export function useApi() {
       body: payload,
     })
 
+  const loadKnockoutResults = () =>
+    $fetch(`/k`, { baseURL }).catch((error: { statusCode?: number; status?: number }) => {
+      const status = error?.statusCode ?? error?.status
+      if (status === 404) {
+        return null
+      }
+      throw error
+    })
+
+  const saveKnockoutResults = (payload: Record<string, unknown>) =>
+    $fetch(`/k`, {
+      baseURL,
+      method: 'PUT',
+      body: payload,
+    })
+
   return {
     save,
     load,
@@ -57,5 +73,8 @@ export function useApi() {
 
     loadStandings,
     saveStandings,
+
+    loadKnockoutResults,
+    saveKnockoutResults,
   }
 }

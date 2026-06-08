@@ -74,6 +74,58 @@
 
     <CollapsibleArea>
       <template #header>
+        <h2 class="text-xl font-semibold lg:text-2xl">Third-place slot assignments</h2>
+      </template>
+      <template #content>
+        <p class="text-slate-500 text-sm mt-2">Assign which third-place group fills each Round of 32 wildcard slot.</p>
+        <div class="grid gap-4 grid-cols-1 md:grid-cols-2 max-w-3xl mt-4">
+          <label
+            v-for="slotKey in THIRD_PLACE_SLOT_KEYS"
+            :key="slotKey"
+            class="flex items-center gap-3 text-lg"
+          >
+            <span class="w-10 font-medium">{{ slotKey }}</span>
+            <select
+              class="border rounded p-2 flex-1"
+              v-model="knockoutResults.thirdPlaceSlots[slotKey]"
+              @change="saveKnockout"
+            >
+              <option :value="undefined">—</option>
+              <option
+                v-for="group in THIRD_PLACE_ELIGIBLE[slotKey]"
+                :key="group"
+                :value="group"
+              >
+                3rd Group {{ group }}
+              </option>
+            </select>
+          </label>
+        </div>
+        <p v-if="knockoutError" class="mt-4 text-red-600 text-sm">{{ knockoutError }}</p>
+      </template>
+    </CollapsibleArea>
+
+    <CollapsibleArea v-for="round in KNOCKOUT_ROUNDS" :key="`ko-${round}`">
+      <template #header>
+        <h2 class="text-xl font-semibold lg:text-2xl">{{ KNOCKOUT_ROUND_LABELS[round] }} results</h2>
+      </template>
+      <template #content>
+        <div class="grid gap-4 grid-cols-1 lg:grid-cols-2 mt-4">
+          <KnockoutMatchCard
+            v-for="entry in adminRoundMatches(round)"
+            :key="entry.def.id"
+            :label="entry.def.label"
+            :teams="entry.teams"
+            v-model="entry.result"
+            show-final-toggle
+            @update:model-value="saveKnockout"
+          />
+        </div>
+      </template>
+    </CollapsibleArea>
+
+    <CollapsibleArea>
+      <template #header>
         <h2 class="text-xl font-semibold lg:text-2xl">Users</h2>
       </template>
       <template #content>
@@ -125,16 +177,28 @@
 import draggable from 'vuedraggable'
 import { GROUP_KEYS } from '~/constants'
 import {
+  KNOCKOUT_ROUNDS,
+  KNOCKOUT_ROUND_LABELS,
+  THIRD_PLACE_ELIGIBLE,
+  THIRD_PLACE_SLOT_KEYS,
+} from '~/constants/knockoutBracket'
+import {
   deserializeStandings,
   makeDefaultStandings,
   serializeStandings,
 } from '~/utils/groupStandings'
+import {
+  makeEmptyKnockoutResults,
+  normalizeKnockoutResults,
+} from '~/utils/knockout'
+import { defaultThirdPlaceSlots, resolveRoundMatches } from '~/utils/knockoutResolver'
+import { ensureAdminMatchResult, ensureKnockoutResultsShape } from '~/utils/knockoutHelpers'
 
 definePageMeta({
   middleware: 'admin',
 })
 
-const { listUsers, loadStandings, saveStandings: saveStandingsApi, deleteUser: deleteUserApi } = useApi()
+const { listUsers, loadStandings, saveStandings: saveStandingsApi, deleteUser: deleteUserApi, loadKnockoutResults, saveKnockoutResults: saveKnockoutResultsApi } = useApi()
 
 const users = ref([])
 const isLoadingUsers = ref(true)
@@ -143,19 +207,35 @@ const deletingUserId = ref(null)
 const deleteUserError = ref(null)
 
 const standings = ref(makeDefaultStandings())
+const standingsPayload = ref(null)
+const knockoutResults = ref(makeEmptyKnockoutResults())
 const hydrated = ref(false)
 const isSaving = ref(false)
+const isSavingKnockout = ref(false)
 const standingsError = ref(null)
+const knockoutError = ref(null)
 
 onMounted(async () => {
   await loadUsers()
 
   try {
     const saved = await loadStandings()
+    standingsPayload.value = saved
     standings.value = deserializeStandings(saved)
   } catch (e) {
     standingsError.value = e?.message ?? String(e)
     standings.value = makeDefaultStandings()
+  }
+
+  try {
+    const savedKnockout = await loadKnockoutResults()
+    knockoutResults.value = normalizeKnockoutResults(savedKnockout)
+    ensureKnockoutResultsShape(knockoutResults.value)
+    if (Object.keys(knockoutResults.value.thirdPlaceSlots).length === 0) {
+      knockoutResults.value.thirdPlaceSlots = defaultThirdPlaceSlots(standingsPayload.value)
+    }
+  } catch (e) {
+    knockoutError.value = e?.message ?? String(e)
   } finally {
     hydrated.value = true
   }
@@ -199,11 +279,35 @@ async function saveStandings() {
   try {
     isSaving.value = true
     standingsError.value = null
-    await saveStandingsApi(serializeStandings(standings.value))
+    const payload = serializeStandings(standings.value)
+    await saveStandingsApi(payload)
+    standingsPayload.value = payload
   } catch (e) {
     standingsError.value = e?.message ?? String(e)
   } finally {
     isSaving.value = false
+  }
+}
+
+function adminRoundMatches(round) {
+  return resolveRoundMatches(round, standingsPayload.value, knockoutResults.value).map((entry) => ({
+    def: entry.def,
+    teams: entry.teams,
+    result: ensureAdminMatchResult(knockoutResults.value, round, entry.def.id, standingsPayload.value),
+  }))
+}
+
+async function saveKnockout() {
+  if (!hydrated.value) return
+
+  try {
+    isSavingKnockout.value = true
+    knockoutError.value = null
+    await saveKnockoutResultsApi(knockoutResults.value)
+  } catch (e) {
+    knockoutError.value = e?.message ?? String(e)
+  } finally {
+    isSavingKnockout.value = false
   }
 }
 </script>

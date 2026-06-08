@@ -39,6 +39,23 @@ Payload shape (array order = standing):
 
 Uses the same `env.DB` binding as `/p` and `/u`. Single row with `id = 'global'`.
 
+## `/k` endpoint
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/k` | Returns knockout results JSON (`404` + body `null` if unset) |
+| PUT | `/k` | Saves knockout results (third-place slots + match scores) |
+
+D1 migration:
+
+```sql
+CREATE TABLE IF NOT EXISTS knockout_results (
+  id TEXT PRIMARY KEY,
+  data_json TEXT NOT NULL,
+  updated_at INTEGER NOT NULL
+);
+```
+
 ## `/u` endpoint
 
 | Method | Path | Description |

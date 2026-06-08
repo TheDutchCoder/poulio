@@ -64,6 +64,19 @@ function validateGroupStandings(body) {
   return null;
 }
 
+function validateKnockoutResults(body) {
+  if (!body || body.v !== 1) {
+    return "Invalid payload: expected { v: 1, ... }";
+  }
+  if (body.thirdPlaceSlots != null && typeof body.thirdPlaceSlots !== "object") {
+    return "thirdPlaceSlots must be an object";
+  }
+  if (body.matches != null && typeof body.matches !== "object") {
+    return "matches must be an object";
+  }
+  return null;
+}
+
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
@@ -255,6 +268,79 @@ export default {
             error: "Database error on PUT /g",
             detail: err?.message || String(err),
             hint: "Run the group_standings CREATE TABLE migration in D1 (see worker-api/README.md)",
+          }),
+          { status: 500, headers: { ...cors, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
+    // GET /k -> knockout results (single global document)
+    if (req.method === "GET" && url.pathname === "/k") {
+      try {
+        const row = await env.DB.prepare(
+          "SELECT data_json FROM knockout_results WHERE id = ?"
+        )
+          .bind("global")
+          .first();
+
+        if (!row) {
+          return new Response("null", { status: 404, headers: { ...cors, "Content-Type": "application/json" } });
+        }
+
+        return new Response(row.data_json, {
+          headers: { ...cors, "Content-Type": "application/json" },
+        });
+      } catch (err) {
+        return new Response(
+          JSON.stringify({
+            error: "Database error on GET /k",
+            detail: err?.message || String(err),
+            hint: "Run the knockout_results CREATE TABLE migration in D1 (see worker-api/README.md)",
+          }),
+          { status: 500, headers: { ...cors, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
+    // PUT /k -> save knockout results
+    if (req.method === "PUT" && url.pathname === "/k") {
+      let body;
+      try {
+        body = await req.json();
+      } catch {
+        return new Response(JSON.stringify({ error: "Invalid JSON" }), {
+          status: 400,
+          headers: { ...cors, "Content-Type": "application/json" },
+        });
+      }
+
+      const error = validateKnockoutResults(body);
+      if (error) {
+        return new Response(JSON.stringify({ error }), {
+          status: 400,
+          headers: { ...cors, "Content-Type": "application/json" },
+        });
+      }
+
+      try {
+        const now = Date.now();
+
+        await env.DB.prepare(
+          "INSERT INTO knockout_results (id, data_json, updated_at) VALUES (?, ?, ?) " +
+            "ON CONFLICT(id) DO UPDATE SET data_json = excluded.data_json, updated_at = excluded.updated_at"
+        )
+          .bind("global", JSON.stringify(body), now)
+          .run();
+
+        return new Response(JSON.stringify(body), {
+          headers: { ...cors, "Content-Type": "application/json" },
+        });
+      } catch (err) {
+        return new Response(
+          JSON.stringify({
+            error: "Database error on PUT /k",
+            detail: err?.message || String(err),
+            hint: "Run the knockout_results CREATE TABLE migration in D1 (see worker-api/README.md)",
           }),
           { status: 500, headers: { ...cors, "Content-Type": "application/json" } }
         );
