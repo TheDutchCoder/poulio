@@ -15,7 +15,7 @@
       </template>
       <template #content>
         <div class="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-4">
-          <div class="relative w-96 mx-auto" v-for="(g, index) in groups" :key="index">
+          <div class="w-full relative md:max-w-96" v-for="(g, index) in groups" :key="index">
             <Transition name="fade">
               <div class="absolute inset-0 bg-white/50 rounded-lg backdrop-blur-sm flex items-center justify-center" v-show="isLoading">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10 text-yellow-500 animate-spin">
@@ -26,10 +26,7 @@
 
             <div class="border rounded-lg shadow-lg overflow-hidden divide-y">
               <div class="bg-gray-50 text-lg px-3 py-2 font-semibold">Group {{ GROUP_KEYS[index] }}</div>
-              <div
-                v-if="hasPublishedStandings"
-                class="flex gap-2 items-center px-3 py-1.5 bg-gray-50 text-sm text-slate-500 border-b"
-              >
+              <div class="flex gap-2 items-center px-3 py-1.5 bg-gray-50 text-sm text-slate-500 border-b">
                 <div class="flex-1 min-w-0">Team</div>
                 <div class="w-10 text-right tabular-nums">Pts</div>
                 <div class="w-16 text-right tabular-nums">Your pts</div>
@@ -59,17 +56,15 @@
                       <div>{{ element.flag }}</div>
                       <div class="flex-1 min-w-0 truncate">{{ element.name }}</div>
                     </div>
-                    <template v-if="hasPublishedStandings">
-                      <div class="w-10 text-right text-sm tabular-nums text-slate-500">
-                        {{ tournamentPointsForTeam(index, element.key) ?? '—' }}
-                      </div>
-                      <div
-                        class="w-16 text-right text-sm font-medium tabular-nums"
-                        :class="earnedPointsClass(index, element.key)"
-                      >
-                        {{ earnedPointsDisplay(index, element.key) }}
-                      </div>
-                    </template>
+                    <div class="w-10 text-right text-sm tabular-nums text-slate-500">
+                      {{ tournamentPointsForTeam(index, element.key) }}
+                    </div>
+                    <div
+                      class="w-16 text-right text-sm font-medium tabular-nums"
+                      :class="earnedPointsClass(index, element.key)"
+                    >
+                      {{ earnedPointsDisplay(index, element.key) }}
+                    </div>
                   </div>
                 </template>
               </draggable>
@@ -383,8 +378,9 @@ function pickRowClass(groupIndex, teamCode) {
 }
 
 function tournamentPointsForTeam(groupIndex, teamCode) {
+  if (!hasPublishedStandings.value) return 0
   const entry = standings.value[groupIndex]?.find(e => e.country.key === teamCode)
-  return entry?.points ?? null
+  return entry?.points ?? 0
 }
 
 function earnedPointsForTeam(groupIndex, teamCode) {
@@ -394,8 +390,7 @@ function earnedPointsForTeam(groupIndex, teamCode) {
 }
 
 function earnedPointsDisplay(groupIndex, teamCode) {
-  const points = earnedPointsForTeam(groupIndex, teamCode)
-  return points === null ? '—' : points
+  return earnedPointsForTeam(groupIndex, teamCode) ?? 0
 }
 
 function earnedPointsClass(groupIndex, teamCode) {
