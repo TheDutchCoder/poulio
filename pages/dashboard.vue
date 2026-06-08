@@ -2,11 +2,14 @@
   <div v-if="user.loggedIn" class="w-full flex flex-col gap-4 lg:gap-8">
     <CollapsibleArea is-open>
       <template #header>
-        <div class="flex">
+        <div class="flex flex-col gap-1">
           <h1 class="text-xl font-semibold lg:text-2xl">Group Stage Picks for {{ user.name }}</h1>
+          <p v-if="hasPublishedStandings" class="text-slate-500 text-sm mt-2">
+            Your score: <span class="font-semibold">{{ myGroupScore }}</span> / {{ MAX_GROUP_STAGE_POINTS }}
+          </p>
         </div>
         <ul>
-          <li><span class="text-slate-500">You have until {{ endDateGroupPicksFormatted }} to change your predictions</span></li>
+          <li><span class="text-slate-500 text-sm mt-2">You have until {{ endDateGroupPicksFormatted }} to change your predictions</span></li>
         </ul>
       </template>
       <template #content>
@@ -30,17 +33,96 @@
                 @change="updateGroupPicks"
                 :disabled="!canMakeGroupPicks"
                 ghost-class="bg-indigo-50"
-                item-key="id"
+                item-key="key"
                 class="bg-white overflow-hidden divide-y text-lg"
               >
-                <template #item="{element, index}">
-                  <div class="flex gap-2 items-center px-3 py-2 hover:bg-gray-50" :class="{ 'cursor-move': canMakeGroupPicks }">
-                    <div class="text-sm">{{index + 1}}</div>
-                    <div>{{element.flag}}</div>
-                    <div>{{element.name}}</div>
+                <template #item="{element, index: rank}">
+                  <div
+                    class="flex gap-2 items-center px-3 py-2"
+                    :class="[
+                      canMakeGroupPicks ? 'cursor-move' : '',
+                      'hover:bg-gray-50',
+                      pickRowClass(index, element.key),
+                    ]"
+                  >
+                    <div class="text-sm">{{ rank + 1 }}</div>
+                    <div>{{ element.flag }}</div>
+                    <div class="flex-1">{{ element.name }}</div>
+                    <span
+                      v-if="pickPointsBadge(index, element.key) != null"
+                      class="text-sm font-medium tabular-nums"
+                      :class="pickPointsClass(index, element.key)"
+                    >
+                      {{ pickPointsBadge(index, element.key) }}
+                    </span>
                   </div>
                 </template>
               </draggable>
+            </div>
+          </div>
+        </div>
+      </template>
+    </CollapsibleArea>
+
+    <CollapsibleArea :is-open="hasPublishedStandings">
+      <template #header>
+        <h2 class="text-xl font-semibold lg:text-2xl">Group stage leaderboard</h2>
+        <p v-if="!hasPublishedStandings" class="text-slate-500 text-sm mt-2">
+          Scores appear once group stage results are published.
+        </p>
+      </template>
+      <template #content>
+        <div v-if="isLoadingLeaderboard" class="text-slate-500 text-sm mt-2">Loading scores…</div>
+        <p v-else-if="leaderboardError" class="text-red-600 text-sm mt-2">{{ leaderboardError }}</p>
+        <div v-else class="overflow-x-auto mt-4">
+          <table class="border rounded-lg shadow-lg w-full max-w-xl mx-auto">
+            <thead class="bg-gray-50 text-lg font-semibold">
+              <tr>
+                <th class="px-4 py-2 border-b text-left w-16">#</th>
+                <th class="px-4 py-2 border-b text-left">Player</th>
+                <th class="px-4 py-2 border-b text-right">Points</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white text-lg">
+              <tr
+                v-for="(entry, index) in leaderboard"
+                :key="entry.id"
+                class="hover:bg-gray-50"
+                :class="{ 'bg-indigo-50 font-medium': entry.id === user.id }"
+              >
+                <td class="px-4 py-2 border-b">{{ index + 1 }}</td>
+                <td class="px-4 py-2 border-b">{{ entry.name }}</td>
+                <td class="px-4 py-2 border-b text-right">{{ entry.points }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </template>
+    </CollapsibleArea>
+
+    <CollapsibleArea v-if="hasPublishedStandings">
+      <template #header>
+        <h2 class="text-xl font-semibold lg:text-2xl">Actual group stage results</h2>
+      </template>
+      <template #content>
+        <div class="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-4">
+          <div class="w-96 mx-auto" v-for="(group, index) in standings" :key="GROUP_KEYS[index]">
+            <div class="border rounded-lg shadow-lg overflow-hidden divide-y">
+              <div class="bg-gray-50 text-lg px-3 py-2 font-semibold">Group {{ GROUP_KEYS[index] }}</div>
+              <div class="bg-white divide-y text-lg">
+                <div
+                  v-for="(entry, rank) in group"
+                  :key="entry.country.key"
+                  class="flex flex-wrap gap-x-2 gap-y-1 items-center px-3 py-2"
+                >
+                  <span class="text-sm w-4">{{ rank + 1 }}</span>
+                  <span>{{ entry.country.flag }}</span>
+                  <span class="flex-1 min-w-0">{{ entry.country.name }}</span>
+                  <span class="text-sm text-slate-500">{{ entry.points }} pts</span>
+                  <span v-if="entry.qualified" class="text-sm text-green-600" title="Qualified">Q</span>
+                  <span v-if="entry.played" class="text-sm text-slate-600" title="Position final">Final</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -56,6 +138,13 @@ import {
   COUNTRIES,
   GROUP_KEYS,
 } from '~/constants'
+import { deserializeStandings } from '~/utils/groupStandings'
+import {
+  getPickFeedback,
+  getPointsForTeam,
+  MAX_GROUP_STAGE_POINTS,
+  scoreGroupStage,
+} from '~/utils/scoring'
 
 // Current date
 const currentDate = Date.now()
@@ -90,26 +179,196 @@ const startDateFinalPicks = new Date('15-07-2026')
 const endDateFinalPicks = new Date('19-07-2026')
 const canMakeFinalPicks = computed(() => currentDate >= startDateFinalPicks && currentDate < endDateFinalPicks)
 
-const { load, upsertUser } = useApi()
-const hydrated = ref(false);
+const { load, upsertUser, loadStandings, listUsers, list } = useApi()
+const hydrated = ref(false)
+const standingsPayload = ref(null)
+const standings = ref(deserializeStandings(null))
+const leaderboard = ref([])
+const isLoadingLeaderboard = ref(false)
+const leaderboardError = ref(null)
+let standingsPollTimer = null
+
+const hasPublishedStandings = computed(() => standingsPayload.value?.groups != null)
+
+const groups = ref(Array.from({ length: 12 }, () => []))
+
+const groupsPayload = computed(() =>
+  Object.fromEntries(
+    GROUP_KEYS.map((letter, i) => [
+      letter,
+      (groups.value[i] ?? []).map(c => c.key),
+    ]),
+  ),
+)
+
+const myGroupScore = computed(() =>
+  scoreGroupStage(groupsPayload.value, standingsPayload.value),
+)
 
 onMounted(async () => {
   try {
     isLoading.value = true
 
-    await upsertUser(user.value.id, user.value.name, user.value.email);
+    await upsertUser(user.value.id, user.value.name, user.value.email)
 
-    const saved = await load(user.value.id);
-    const des = deserializeGroups(saved);
-    const hasAny = des.some(g => g.length > 0);
-    groups.value = hasAny ? des : makeDefaultGroups();
+    const saved = await load(user.value.id)
+    const des = deserializeGroups(saved)
+    const hasAny = des.some(g => g.length > 0)
+    groups.value = hasAny ? des : makeDefaultGroups()
   } catch (e) {
-    groups.value = makeDefaultGroups();
+    groups.value = makeDefaultGroups()
   } finally {
     hydrated.value = true
     isLoading.value = false
   }
-});
+
+  await loadScores()
+  startStandingsPolling()
+})
+
+onUnmounted(() => {
+  stopStandingsPolling()
+})
+
+function startStandingsPolling() {
+  stopStandingsPolling()
+  standingsPollTimer = setInterval(() => {
+    if (document.hidden) return
+    refreshStandings()
+  }, 30_000)
+}
+
+function stopStandingsPolling() {
+  if (standingsPollTimer) {
+    clearInterval(standingsPollTimer)
+    standingsPollTimer = null
+  }
+}
+
+function applyStandings(savedStandings) {
+  standingsPayload.value = savedStandings
+  standings.value = deserializeStandings(savedStandings)
+}
+
+async function rebuildLeaderboard(savedStandings) {
+  if (!savedStandings?.groups) {
+    leaderboard.value = []
+    return
+  }
+
+  const [users, predictionsList] = await Promise.all([listUsers(), list()])
+  const usersById = Object.fromEntries(
+    (users ?? []).map((entry) => [entry.id, entry.username]),
+  )
+
+  const entries = await Promise.all(
+    (predictionsList ?? []).map(async ({ user: userId }) => {
+      try {
+        const prediction = await load(userId)
+        return {
+          id: userId,
+          name: usersById[userId] ?? userId,
+          points: scoreGroupStage(prediction?.groups, savedStandings),
+        }
+      } catch {
+        return {
+          id: userId,
+          name: usersById[userId] ?? userId,
+          points: 0,
+        }
+      }
+    }),
+  )
+
+  leaderboard.value = entries.sort((a, b) => b.points - a.points || a.name.localeCompare(b.name))
+}
+
+async function refreshStandings() {
+  try {
+    const savedStandings = await loadStandings()
+    applyStandings(savedStandings)
+    await rebuildLeaderboard(savedStandings)
+  } catch {
+    // ignore transient poll failures
+  }
+}
+
+async function loadScores() {
+  try {
+    isLoadingLeaderboard.value = true
+    leaderboardError.value = null
+
+    const savedStandings = await loadStandings()
+    applyStandings(savedStandings)
+    await rebuildLeaderboard(savedStandings)
+  } catch (e) {
+    leaderboardError.value = e?.message ?? String(e)
+  } finally {
+    isLoadingLeaderboard.value = false
+  }
+}
+
+function groupKeyForIndex(groupIndex) {
+  return GROUP_KEYS[groupIndex]
+}
+
+function pickRowClass(groupIndex, teamCode) {
+  const feedback = getPickFeedback(
+    groupsPayload.value,
+    standingsPayload.value,
+    groupKeyForIndex(groupIndex),
+    teamCode,
+  )
+
+  if (feedback === 'correct') return 'bg-green-50'
+  if (feedback === 'incorrect') return 'bg-red-50'
+  return ''
+}
+
+function pickPointsBadge(groupIndex, teamCode) {
+  const groupKey = groupKeyForIndex(groupIndex)
+  const feedback = getPickFeedback(groupsPayload.value, standingsPayload.value, groupKey, teamCode)
+
+  if (feedback === 'neutral') return null
+  if (feedback === 'incorrect') return '0'
+
+  const points = getPointsForTeam(groupsPayload.value, standingsPayload.value, groupKey, teamCode)
+  return `+${points}`
+}
+
+function pickPointsClass(groupIndex, teamCode) {
+  const feedback = getPickFeedback(
+    groupsPayload.value,
+    standingsPayload.value,
+    groupKeyForIndex(groupIndex),
+    teamCode,
+  )
+
+  if (feedback === 'correct') return 'text-green-700'
+  if (feedback === 'incorrect') return 'text-red-600'
+  return ''
+}
+
+function refreshMyLeaderboardScore() {
+  if (!standingsPayload.value?.groups) return
+
+  const points = scoreGroupStage(groupsPayload.value, standingsPayload.value)
+  const existing = leaderboard.value.find((entry) => entry.id === user.value.id)
+
+  if (existing) {
+    existing.points = points
+  } else {
+    leaderboard.value.push({
+      id: user.value.id,
+      name: user.value.name,
+      points,
+    })
+  }
+
+  leaderboard.value = [...leaderboard.value].sort(
+    (a, b) => b.points - a.points || a.name.localeCompare(b.name),
+  )
+}
 
 function deserializeGroups(saved) {
   const savedGroups = saved?.groups ?? {};
@@ -155,21 +414,11 @@ async function updateGroupPicks() {
     }
 
     await save(user.value.id, payload)
+    refreshMyLeaderboardScore()
   } finally {
     isLoading.value = false
   }
 }
-
-const groups = ref(Array.from({ length: 12 }, () => [])); // 12 empty groups
-
-const groupsPayload = computed(() => {
-  return Object.fromEntries(
-    GROUP_KEYS.map((letter, i) => [
-      letter,
-      (groups.value[i] ?? []).map(c => c.key),
-    ])
-  );
-});
 
 const user = useUser()
 </script>

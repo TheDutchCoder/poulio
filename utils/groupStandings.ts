@@ -6,11 +6,12 @@ export type StandingEntry = {
   country: Country
   points: number
   qualified: boolean
+  played: boolean
 }
 
 export type StandingsPayload = {
   v: 1
-  groups: Record<GroupKey, { code: CountryCode; points: number; qualified: boolean }[]>
+  groups: Record<GroupKey, { code: CountryCode; points: number; qualified: boolean; played: boolean }[]>
 }
 
 export function makeDefaultStandings(): StandingEntry[][] {
@@ -19,6 +20,7 @@ export function makeDefaultStandings(): StandingEntry[][] {
       country: COUNTRIES[code],
       points: 0,
       qualified: false,
+      played: false,
     }))
   )
 }
@@ -35,6 +37,7 @@ export function deserializeStandings(saved: StandingsPayload | null | undefined)
         country: COUNTRIES[code],
         points: 0,
         qualified: false,
+        played: false,
       }))
     }
 
@@ -46,6 +49,7 @@ export function deserializeStandings(saved: StandingsPayload | null | undefined)
           country,
           points: entry.points ?? 0,
           qualified: entry.qualified ?? false,
+          played: entry.played ?? false,
         }
       })
       .filter((entry): entry is StandingEntry => entry !== null)
@@ -62,6 +66,7 @@ export function serializeStandings(standings: StandingEntry[][]): StandingsPaylo
           code: entry.country.key as CountryCode,
           points: entry.points,
           qualified: entry.qualified,
+          played: entry.played,
         })),
       ])
     ) as StandingsPayload['groups'],

@@ -5,7 +5,7 @@ export const users = [
   }
 ]
 
-export const RANKING_POINTS_GROUP = [2, 2, 1, 1]
+export const RANKING_POINTS_GROUP = [7, 5, 3, 1]
 export const RANKING_POINTS_ROUND_OF_16 = [4, 2]
 export const RANKING_POINTS_ROUND_OF_8 = [4, 2]
 export const RANKING_POINTS_ROUND_OF_4 = [4, 2]
