@@ -8,7 +8,7 @@ export type PickWindow = {
 export const GROUP_PICK_WINDOW: PickWindow = {
   round: 'group',
   start: new Date('2026-01-01'),
-  end: new Date('2026-11-06'),
+  end: new Date('2026-06-11'),
   label: 'Group stage',
 }
 
