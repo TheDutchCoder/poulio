@@ -5,7 +5,9 @@ export const users = [
   }
 ]
 
-export const RANKING_POINTS_GROUP = [7, 5, 3, 1]
+export const GROUP_POINTS_CORRECT = 3
+/** @deprecated Use GROUP_POINTS_CORRECT — kept for any legacy references */
+export const RANKING_POINTS_GROUP = [GROUP_POINTS_CORRECT, GROUP_POINTS_CORRECT, GROUP_POINTS_CORRECT, GROUP_POINTS_CORRECT]
 export const KNOCKOUT_POINTS_WINNER = 5
 export const KNOCKOUT_POINTS_EXACT = 5
 export const MAX_KNOCKOUT_MATCHES = 32

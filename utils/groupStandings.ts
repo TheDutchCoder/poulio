@@ -6,12 +6,37 @@ export type StandingEntry = {
   country: Country
   points: number
   qualified: boolean
+  /** Team has played at least one group-stage match (scoring gate). */
   played: boolean
+  /** Group-stage position is confirmed (admin reference). */
+  final: boolean
+}
+
+type StandingEntryPayload = {
+  code: CountryCode
+  points: number
+  qualified: boolean
+  played: boolean
+  final?: boolean
 }
 
 export type StandingsPayload = {
   v: 1
-  groups: Record<GroupKey, { code: CountryCode; points: number; qualified: boolean; played: boolean }[]>
+  groups: Record<GroupKey, StandingEntryPayload[]>
+}
+
+function parseStandingEntry(entry: StandingEntryPayload): StandingEntry | null {
+  const country = COUNTRIES[entry.code as CountryCode]
+  if (!country) return null
+
+  const hasFinalField = 'final' in entry
+  return {
+    country,
+    points: entry.points ?? 0,
+    qualified: entry.qualified ?? false,
+    played: hasFinalField ? (entry.played ?? false) : false,
+    final: hasFinalField ? (entry.final ?? false) : (entry.played ?? false),
+  }
 }
 
 export function makeDefaultStandings(): StandingEntry[][] {
@@ -21,6 +46,7 @@ export function makeDefaultStandings(): StandingEntry[][] {
       points: 0,
       qualified: false,
       played: false,
+      final: false,
     }))
   )
 }
@@ -38,20 +64,12 @@ export function deserializeStandings(saved: StandingsPayload | null | undefined)
         points: 0,
         qualified: false,
         played: false,
+        final: false,
       }))
     }
 
     return entries
-      .map((entry) => {
-        const country = COUNTRIES[entry.code as CountryCode]
-        if (!country) return null
-        return {
-          country,
-          points: entry.points ?? 0,
-          qualified: entry.qualified ?? false,
-          played: entry.played ?? false,
-        }
-      })
+      .map((entry) => parseStandingEntry(entry))
       .filter((entry): entry is StandingEntry => entry !== null)
   })
 }
@@ -67,6 +85,7 @@ export function serializeStandings(standings: StandingEntry[][]): StandingsPaylo
           points: entry.points,
           qualified: entry.qualified,
           played: entry.played,
+          final: entry.final,
         })),
       ])
     ) as StandingsPayload['groups'],

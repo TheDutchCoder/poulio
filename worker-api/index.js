@@ -52,6 +52,9 @@ function validateGroupStandings(body) {
       if (typeof entry.played !== "boolean") {
         return `Group ${key}: played for ${entry.code} must be a boolean`;
       }
+      if (typeof entry.final !== "boolean") {
+        return `Group ${key}: final for ${entry.code} must be a boolean`;
+      }
     }
 
     for (const code of roster) {

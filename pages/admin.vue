@@ -6,7 +6,7 @@
       </template>
       <template #content>
         <p class="text-slate-500 text-sm mt-2">Drag to set standings. Changes save automatically.</p>
-        <p class="text-slate-500 text-sm mt-1">Check Final when a team's group-stage position is confirmed (including 0-point last place).</p>
+        <p class="text-slate-500 text-sm mt-1">Check Played when a team has completed at least one group match (live scoring). Check Final when their position is confirmed.</p>
         <div class="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-4">
           <div class="relative w-96 mx-auto" v-for="(group, index) in standings" :key="GROUP_KEYS[index]">
             <Transition name="fade">
@@ -58,6 +58,14 @@
                       <input
                         type="checkbox"
                         v-model="element.played"
+                        @change="saveStandings"
+                      >
+                      <span class="text-slate-500">Played</span>
+                    </label>
+                    <label class="inline-flex items-center gap-1 text-sm cursor-pointer">
+                      <input
+                        type="checkbox"
+                        v-model="element.final"
                         @change="saveStandings"
                       >
                       <span class="text-slate-500">Final</span>

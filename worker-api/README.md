@@ -28,10 +28,10 @@ Payload shape (array order = standing):
   "v": 1,
   "groups": {
     "A": [
-      { "code": "MEX", "points": 6, "qualified": true, "played": true },
-      { "code": "RSA", "points": 3, "qualified": false, "played": false },
-      { "code": "KOR", "points": 3, "qualified": false },
-      { "code": "CZE", "points": 0, "qualified": false }
+      { "code": "MEX", "points": 6, "qualified": true, "played": true, "final": false },
+      { "code": "RSA", "points": 3, "qualified": false, "played": true, "final": false },
+      { "code": "KOR", "points": 3, "qualified": false, "played": false, "final": false },
+      { "code": "CZE", "points": 0, "qualified": false, "played": false, "final": false }
     ]
   }
 }

@@ -1,9 +1,9 @@
 import {
   GROUP_KEYS,
+  GROUP_POINTS_CORRECT,
   KNOCKOUT_POINTS_EXACT,
   KNOCKOUT_POINTS_WINNER,
   MAX_KNOCKOUT_MATCHES,
-  RANKING_POINTS_GROUP,
   type GroupKey,
 } from '~/constants'
 import type { KnockoutRound } from '~/constants/knockoutBracket'
@@ -88,25 +88,18 @@ export function getPointsForTeam(
   standings: StandingsPayload | null | undefined,
   groupKey: GroupKey,
   teamCode: string,
-  rankingPoints: readonly number[] = RANKING_POINTS_GROUP,
 ): number {
   const feedback = getPickFeedback(picks, standings, groupKey, teamCode)
   if (feedback !== 'correct') {
     return 0
   }
 
-  const predictedRank = getPredictedRank(picks, groupKey, teamCode)
-  if (predictedRank === null) {
-    return 0
-  }
-
-  return rankingPoints[predictedRank] ?? 0
+  return GROUP_POINTS_CORRECT
 }
 
 export function scoreGroupStage(
   picks: GroupPicks | null | undefined,
   standings: StandingsPayload | null | undefined,
-  rankingPoints: readonly number[] = RANKING_POINTS_GROUP,
 ): number {
   if (!standings?.groups || !picks) {
     return 0
@@ -125,14 +118,14 @@ export function scoreGroupStage(
         continue
       }
 
-      total += getPointsForTeam(picks, standings, groupKey, entry.code, rankingPoints)
+      total += getPointsForTeam(picks, standings, groupKey, entry.code)
     }
   }
 
   return total
 }
 
-export const MAX_GROUP_STAGE_POINTS = GROUP_KEYS.length * RANKING_POINTS_GROUP.reduce((sum, n) => sum + n, 0)
+export const MAX_GROUP_STAGE_POINTS = GROUP_KEYS.length * 4 * GROUP_POINTS_CORRECT
 
 export type KnockoutScoreBreakdown = {
   winner: number
