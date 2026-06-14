@@ -7,8 +7,8 @@
       <template #content>
         <p class="text-slate-500 text-sm mt-2">Drag to set standings. Changes save automatically.</p>
         <p class="text-slate-500 text-sm mt-1">Check Played when a team has completed at least one group match (live scoring). Check Final when their position is confirmed.</p>
-        <div class="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-4">
-          <div class="relative w-96 mx-auto" v-for="(group, index) in standings" :key="GROUP_KEYS[index]">
+        <div class="grid gap-8 grid-cols-1 lg:grid-cols-2 mt-4">
+          <div class="relative w-full max-w-4xl mx-auto" v-for="(group, index) in standings" :key="GROUP_KEYS[index]">
             <Transition name="fade">
               <div
                 v-show="isSaving"
@@ -24,6 +24,7 @@
               <div class="bg-gray-50 text-lg px-3 py-2 font-semibold">Group {{ GROUP_KEYS[index] }}</div>
               <draggable
                 v-model="standings[index]"
+                handle=".handle"
                 :group="`standings-${index}`"
                 item-key="country.key"
                 ghost-class="bg-indigo-50"
@@ -31,7 +32,10 @@
                 @change="saveStandings"
               >
                 <template #item="{ element, index: rank }">
-                  <div class="flex flex-wrap gap-x-2 gap-y-1 items-center px-3 py-2 hover:bg-gray-50 cursor-move">
+                  <div class="flex flex-wrap gap-x-2 gap-y-1 items-center px-3 py-2 hover:bg-gray-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-gray-500 handle cursor-move">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                    </svg>
                     <span class="text-sm w-4">{{ rank + 1 }}</span>
                     <span>{{ element.country.flag }}</span>
                     <span class="flex-1 min-w-0">{{ element.country.name }}</span>
