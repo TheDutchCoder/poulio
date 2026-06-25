@@ -14,22 +14,26 @@ import type {
   ResolvedMatchTeams,
 } from '~/utils/knockout'
 
-function groupPositionCode(
+function groupSlotCode(
   standings: StandingsPayload | null | undefined,
   group: GroupKey,
   position: 1 | 2 | 3,
 ): string | null {
   const entries = standings?.groups?.[group]
   if (!Array.isArray(entries)) return null
-  const index = position - 1
-  return entries[index]?.code ?? null
+
+  const entry = entries[position - 1]
+  if (!entry?.code) return null
+  if (!entry.qualified || !entry.final) return null
+
+  return entry.code
 }
 
 export function resolveThirdPlaceTeam(
   standings: StandingsPayload | null | undefined,
   thirdGroup: GroupKey,
 ): string | null {
-  return groupPositionCode(standings, thirdGroup, 3)
+  return groupSlotCode(standings, thirdGroup, 3)
 }
 
 function getMatchWinner(
@@ -72,7 +76,7 @@ function resolveSide(
   knockoutResults: KnockoutResultsPayload,
 ): string | null {
   if (side.type === 'group_pos') {
-    return groupPositionCode(standings, side.group, side.position)
+    return groupSlotCode(standings, side.group, side.position)
   }
 
   if (side.type === 'third_from_slot') {

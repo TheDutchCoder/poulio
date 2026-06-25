@@ -89,11 +89,11 @@
               :key="entry.def.id"
               :label="entry.def.label"
               :teams="entry.teams"
-              v-model="entry.pick"
+              :model-value="entry.pick"
               :disabled="!entry.canPick"
               :feedback="entry.feedback"
               :points-total="entry.pointsTotal"
-              @update:model-value="saveKnockoutPicks"
+              @update:model-value="(pick) => updateKnockoutPick(round, entry.def.id, pick)"
             />
           </div>
         </template>
@@ -486,6 +486,12 @@ async function saveKnockoutPicks() {
   } catch {
     // ignore save errors for now
   }
+}
+
+function updateKnockoutPick(round, matchId, pick) {
+  const target = ensureUserMatchPick(knockoutPicks.value, round, matchId)
+  Object.assign(target, pick)
+  saveKnockoutPicks()
 }
 
 function deserializeGroups(saved) {
