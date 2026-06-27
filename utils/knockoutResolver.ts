@@ -96,12 +96,15 @@ export function resolveMatchTeams(
   matchDef: BracketMatchDef,
   standings: StandingsPayload | null | undefined,
   knockoutResults: KnockoutResultsPayload,
-  overrides?: KnockoutMatchResult | null,
 ): ResolvedMatchTeams {
   const stored = knockoutResults.matches?.[matchDef.round]?.[matchDef.id]
+  const resolvedHome = resolveSide(matchDef.home, standings, knockoutResults)
+  const resolvedAway = resolveSide(matchDef.away, standings, knockoutResults)
 
-  const homeCode = (overrides?.homeCode ?? stored?.homeCode ?? resolveSide(matchDef.home, standings, knockoutResults)) as string | null
-  const awayCode = (overrides?.awayCode ?? stored?.awayCode ?? resolveSide(matchDef.away, standings, knockoutResults)) as string | null
+  // Lock teams only once admin marks the match Final; otherwise follow live bracket resolution.
+  const locked = stored?.played === true
+  const homeCode = locked && stored?.homeCode ? stored.homeCode : resolvedHome
+  const awayCode = locked && stored?.awayCode ? stored.awayCode : resolvedAway
 
   return {
     homeCode,

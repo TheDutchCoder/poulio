@@ -204,7 +204,7 @@ import {
   normalizeKnockoutResults,
 } from '~/utils/knockout'
 import { defaultThirdPlaceSlots, resolveRoundMatches } from '~/utils/knockoutResolver'
-import { ensureAdminMatchResult, ensureKnockoutResultsShape } from '~/utils/knockoutHelpers'
+import { ensureAdminMatchResult, ensureKnockoutResultsShape, syncKnockoutMatchTeams } from '~/utils/knockoutHelpers'
 
 definePageMeta({
   middleware: 'admin',
@@ -250,6 +250,7 @@ onMounted(async () => {
     knockoutError.value = e?.message ?? String(e)
   } finally {
     hydrated.value = true
+    syncKnockoutMatchTeams(knockoutResults.value, standingsPayload.value)
   }
 })
 
@@ -294,6 +295,7 @@ async function saveStandings() {
     const payload = serializeStandings(standings.value)
     await saveStandingsApi(payload)
     standingsPayload.value = payload
+    syncKnockoutMatchTeams(knockoutResults.value, standingsPayload.value)
   } catch (e) {
     standingsError.value = e?.message ?? String(e)
   } finally {
@@ -315,6 +317,7 @@ async function saveKnockout() {
   try {
     isSavingKnockout.value = true
     knockoutError.value = null
+    syncKnockoutMatchTeams(knockoutResults.value, standingsPayload.value)
     await saveKnockoutResultsApi(knockoutResults.value)
   } catch (e) {
     knockoutError.value = e?.message ?? String(e)

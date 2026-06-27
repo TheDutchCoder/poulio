@@ -1,5 +1,5 @@
 import type { KnockoutRound } from '~/constants/knockoutBracket'
-import { KNOCKOUT_ROUNDS, MATCHES_BY_ROUND } from '~/constants/knockoutBracket'
+import { ALL_KNOCKOUT_MATCHES, KNOCKOUT_ROUNDS, MATCHES_BY_ROUND } from '~/constants/knockoutBracket'
 import type { StandingsPayload } from '~/utils/groupStandings'
 import {
   emptyKnockoutPick,
@@ -10,6 +10,27 @@ import {
   type ResolvedMatchTeams,
 } from '~/utils/knockout'
 import { resolveMatchTeams } from '~/utils/knockoutResolver'
+
+export function syncKnockoutMatchTeams(
+  results: KnockoutResultsPayload,
+  standings: StandingsPayload | null | undefined,
+): void {
+  ensureKnockoutResultsShape(results)
+
+  for (const matchDef of ALL_KNOCKOUT_MATCHES) {
+    const roundMatches = results.matches[matchDef.round]!
+    const stored = roundMatches[matchDef.id]
+    if (stored?.played) continue
+
+    const teams = resolveMatchTeams(matchDef, standings, results)
+    if (!roundMatches[matchDef.id]) {
+      roundMatches[matchDef.id] = emptyKnockoutResult()
+    }
+
+    roundMatches[matchDef.id].homeCode = teams.homeCode
+    roundMatches[matchDef.id].awayCode = teams.awayCode
+  }
+}
 
 export function ensureKnockoutResultsShape(results: KnockoutResultsPayload): KnockoutResultsPayload {
   if (!results.matches) {
@@ -36,10 +57,10 @@ export function ensureAdminMatchResult(
   }
 
   const matchDef = MATCHES_BY_ROUND[round].find((match) => match.id === matchId)
-  if (matchDef) {
-    const teams = resolveMatchTeams(matchDef, standings, results, roundMatches[matchId])
-    roundMatches[matchId].homeCode = roundMatches[matchId].homeCode ?? teams.homeCode
-    roundMatches[matchId].awayCode = roundMatches[matchId].awayCode ?? teams.awayCode
+  if (matchDef && !roundMatches[matchId].played) {
+    const teams = resolveMatchTeams(matchDef, standings, results)
+    roundMatches[matchId].homeCode = teams.homeCode
+    roundMatches[matchId].awayCode = teams.awayCode
   }
 
   return roundMatches[matchId]
