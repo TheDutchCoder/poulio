@@ -1,6 +1,6 @@
 <template>
   <div class="w-full flex flex-col gap-4 lg:gap-8">
-    <CollapsibleArea is-open>
+    <CollapsibleArea>
       <template #header>
         <h2 class="text-xl font-semibold lg:text-2xl">Group stage results</h2>
       </template>
@@ -117,7 +117,7 @@
       </template>
     </CollapsibleArea>
 
-    <CollapsibleArea v-for="round in KNOCKOUT_ROUNDS" :key="`ko-${round}`">
+    <CollapsibleArea v-for="round in KNOCKOUT_ROUNDS" :key="`ko-${round}`" :is-opn="round === 'r32'">
       <template #header>
         <h2 class="text-xl font-semibold lg:text-2xl">{{ KNOCKOUT_ROUND_LABELS[round] }} results</h2>
       </template>

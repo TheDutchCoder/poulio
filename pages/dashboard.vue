@@ -1,6 +1,6 @@
 <template>
   <div v-if="user.loggedIn" class="w-full flex flex-col gap-4 lg:gap-8">
-    <CollapsibleArea is-open>
+    <CollapsibleArea>
       <template #header>
         <div class="flex flex-col gap-1">
           <h1 class="text-xl font-semibold lg:text-2xl">Group Stage Picks for {{ user.name }}</h1>
@@ -76,7 +76,7 @@
       </template>
     </CollapsibleArea>
 
-    <template v-for="round in KNOCKOUT_ROUNDS" :key="`pick-${round}`">
+    <template v-for="round in KNOCKOUT_ROUNDS" :key="`pick-${round}`" :is-open="round === 'r32'">
       <CollapsibleArea v-if="shouldShowKnockoutRound(round)">
         <template #header>
           <h2 class="text-xl font-semibold lg:text-2xl">{{ KNOCKOUT_ROUND_LABELS[round] }} predictions</h2>
