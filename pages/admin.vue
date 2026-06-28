@@ -117,7 +117,7 @@
       </template>
     </CollapsibleArea>
 
-    <CollapsibleArea v-for="round in KNOCKOUT_ROUNDS" :key="`ko-${round}`" :is-opn="round === 'r32'">
+    <CollapsibleArea v-for="round in KNOCKOUT_ROUNDS" :key="`ko-${round}`" :is-open="round === 'r32'">
       <template #header>
         <h2 class="text-xl font-semibold lg:text-2xl">{{ KNOCKOUT_ROUND_LABELS[round] }} results</h2>
       </template>
