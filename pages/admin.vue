@@ -122,15 +122,20 @@
         <h2 class="text-xl font-semibold lg:text-2xl">{{ KNOCKOUT_ROUND_LABELS[round] }} results</h2>
       </template>
       <template #content>
+        <p class="text-slate-500 text-sm mt-2">
+          <strong>Lock</strong> closes user predictions for that match.
+          <strong>Final</strong> confirms the result for scoring and advancing the bracket.
+        </p>
         <div class="grid gap-4 grid-cols-1 lg:grid-cols-2 mt-4">
           <KnockoutMatchCard
             v-for="entry in adminRoundMatches(round)"
             :key="entry.def.id"
             :label="entry.def.label"
             :teams="entry.teams"
-            v-model="entry.result"
+            :model-value="entry.result"
+            show-lock-toggle
             show-final-toggle
-            @update:model-value="saveKnockout"
+            @update:model-value="(result) => updateAdminKnockoutResult(round, entry.def.id, result)"
           />
         </div>
       </template>
@@ -309,6 +314,17 @@ function adminRoundMatches(round) {
     teams: entry.teams,
     result: ensureAdminMatchResult(knockoutResults.value, round, entry.def.id, standingsPayload.value),
   }))
+}
+
+function updateAdminKnockoutResult(round, matchId, result) {
+  const target = ensureAdminMatchResult(
+    knockoutResults.value,
+    round,
+    matchId,
+    standingsPayload.value,
+  )
+  Object.assign(target, result)
+  saveKnockout()
 }
 
 async function saveKnockout() {

@@ -93,5 +93,5 @@ export function canPickKnockoutMatch(
   teams: ResolvedMatchTeams,
   result: KnockoutMatchResult | null | undefined,
 ): boolean {
-  return isMatchupKnown(teams) && !result?.played
+  return isMatchupKnown(teams) && !result?.locked
 }

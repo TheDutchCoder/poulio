@@ -75,6 +75,14 @@
     </div>
 
     <div class="flex flex-wrap items-center gap-3 text-sm">
+      <label v-if="showLockToggle" class="inline-flex items-center gap-1 cursor-pointer">
+        <input
+          type="checkbox"
+          :checked="model.locked"
+          @change="updateLocked($event)"
+        >
+        <span class="text-slate-500">Lock</span>
+      </label>
       <label v-if="showFinalToggle" class="inline-flex items-center gap-1 cursor-pointer">
         <input
           type="checkbox"
@@ -104,6 +112,7 @@ const props = defineProps({
   modelValue: { type: Object, required: true },
   disabled: { type: Boolean, default: false },
   showFinalToggle: { type: Boolean, default: false },
+  showLockToggle: { type: Boolean, default: false },
   feedback: { type: String, default: 'neutral' },
   pointsTotal: { type: Number, default: null },
 })
@@ -159,6 +168,10 @@ function updateWinner(event) {
 
 function updatePlayed(event) {
   emit('update:modelValue', { ...props.modelValue, played: event.target.checked })
+}
+
+function updateLocked(event) {
+  emit('update:modelValue', { ...props.modelValue, locked: event.target.checked })
 }
 
 function syncWinner(next) {

@@ -12,7 +12,10 @@ export type KnockoutScoreInput = {
 export type KnockoutMatchResult = KnockoutScoreInput & {
   homeCode?: CountryCode | null
   awayCode?: CountryCode | null
+  /** Result and winner confirmed — used for scoring and bracket progression. */
   played?: boolean
+  /** User predictions closed for this match. */
+  locked?: boolean
 }
 
 export type KnockoutMatchPick = KnockoutScoreInput
@@ -51,6 +54,7 @@ export function emptyKnockoutResult(): KnockoutMatchResult {
     homeCode: null,
     awayCode: null,
     played: false,
+    locked: false,
   }
 }
 
